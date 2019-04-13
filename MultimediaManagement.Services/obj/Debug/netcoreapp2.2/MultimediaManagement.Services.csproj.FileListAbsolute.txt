@@ -1,0 +1,13 @@
+G:\L\facultate an 3\sem 2\WAD - web application design\MultimediaManagement\MultimediaManagement.Services\bin\Debug\netcoreapp2.2\MultimediaManagement.Services.deps.json
+G:\L\facultate an 3\sem 2\WAD - web application design\MultimediaManagement\MultimediaManagement.Services\bin\Debug\netcoreapp2.2\MultimediaManagement.Services.runtimeconfig.json
+G:\L\facultate an 3\sem 2\WAD - web application design\MultimediaManagement\MultimediaManagement.Services\bin\Debug\netcoreapp2.2\MultimediaManagement.Services.runtimeconfig.dev.json
+G:\L\facultate an 3\sem 2\WAD - web application design\MultimediaManagement\MultimediaManagement.Services\bin\Debug\netcoreapp2.2\MultimediaManagement.Services.dll
+G:\L\facultate an 3\sem 2\WAD - web application design\MultimediaManagement\MultimediaManagement.Services\bin\Debug\netcoreapp2.2\MultimediaManagement.Services.pdb
+G:\L\facultate an 3\sem 2\WAD - web application design\MultimediaManagement\MultimediaManagement.Services\obj\Debug\netcoreapp2.2\MultimediaManagement.Services.csproj.CoreCompileInputs.cache
+G:\L\facultate an 3\sem 2\WAD - web application design\MultimediaManagement\MultimediaManagement.Services\obj\Debug\netcoreapp2.2\MultimediaManagement.Services.RazorAssemblyInfo.cache
+G:\L\facultate an 3\sem 2\WAD - web application design\MultimediaManagement\MultimediaManagement.Services\obj\Debug\netcoreapp2.2\MultimediaManagement.Services.RazorAssemblyInfo.cs
+G:\L\facultate an 3\sem 2\WAD - web application design\MultimediaManagement\MultimediaManagement.Services\obj\Debug\netcoreapp2.2\MultimediaManagement.Services.AssemblyInfoInputs.cache
+G:\L\facultate an 3\sem 2\WAD - web application design\MultimediaManagement\MultimediaManagement.Services\obj\Debug\netcoreapp2.2\MultimediaManagement.Services.AssemblyInfo.cs
+G:\L\facultate an 3\sem 2\WAD - web application design\MultimediaManagement\MultimediaManagement.Services\obj\Debug\netcoreapp2.2\MultimediaManagement.Services.RazorTargetAssemblyInfo.cache
+G:\L\facultate an 3\sem 2\WAD - web application design\MultimediaManagement\MultimediaManagement.Services\obj\Debug\netcoreapp2.2\MultimediaManagement.Services.dll
+G:\L\facultate an 3\sem 2\WAD - web application design\MultimediaManagement\MultimediaManagement.Services\obj\Debug\netcoreapp2.2\MultimediaManagement.Services.pdb

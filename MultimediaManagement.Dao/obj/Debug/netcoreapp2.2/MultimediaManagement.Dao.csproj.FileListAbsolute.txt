@@ -1,0 +1,14 @@
+G:\L\facultate an 3\sem 2\WAD - web application design\MultimediaManagement\MultimediaManagement.Dao\bin\Debug\netcoreapp2.2\MultimediaManagement.Dao.deps.json
+G:\L\facultate an 3\sem 2\WAD - web application design\MultimediaManagement\MultimediaManagement.Dao\bin\Debug\netcoreapp2.2\MultimediaManagement.Dao.runtimeconfig.json
+G:\L\facultate an 3\sem 2\WAD - web application design\MultimediaManagement\MultimediaManagement.Dao\bin\Debug\netcoreapp2.2\MultimediaManagement.Dao.runtimeconfig.dev.json
+G:\L\facultate an 3\sem 2\WAD - web application design\MultimediaManagement\MultimediaManagement.Dao\bin\Debug\netcoreapp2.2\MultimediaManagement.Dao.dll
+G:\L\facultate an 3\sem 2\WAD - web application design\MultimediaManagement\MultimediaManagement.Dao\bin\Debug\netcoreapp2.2\MultimediaManagement.Dao.pdb
+G:\L\facultate an 3\sem 2\WAD - web application design\MultimediaManagement\MultimediaManagement.Dao\obj\Debug\netcoreapp2.2\MultimediaManagement.Dao.csprojAssemblyReference.cache
+G:\L\facultate an 3\sem 2\WAD - web application design\MultimediaManagement\MultimediaManagement.Dao\obj\Debug\netcoreapp2.2\MultimediaManagement.Dao.csproj.CoreCompileInputs.cache
+G:\L\facultate an 3\sem 2\WAD - web application design\MultimediaManagement\MultimediaManagement.Dao\obj\Debug\netcoreapp2.2\MultimediaManagement.Dao.RazorAssemblyInfo.cache
+G:\L\facultate an 3\sem 2\WAD - web application design\MultimediaManagement\MultimediaManagement.Dao\obj\Debug\netcoreapp2.2\MultimediaManagement.Dao.RazorAssemblyInfo.cs
+G:\L\facultate an 3\sem 2\WAD - web application design\MultimediaManagement\MultimediaManagement.Dao\obj\Debug\netcoreapp2.2\MultimediaManagement.Dao.AssemblyInfoInputs.cache
+G:\L\facultate an 3\sem 2\WAD - web application design\MultimediaManagement\MultimediaManagement.Dao\obj\Debug\netcoreapp2.2\MultimediaManagement.Dao.AssemblyInfo.cs
+G:\L\facultate an 3\sem 2\WAD - web application design\MultimediaManagement\MultimediaManagement.Dao\obj\Debug\netcoreapp2.2\MultimediaManagement.Dao.RazorTargetAssemblyInfo.cache
+G:\L\facultate an 3\sem 2\WAD - web application design\MultimediaManagement\MultimediaManagement.Dao\obj\Debug\netcoreapp2.2\MultimediaManagement.Dao.dll
+G:\L\facultate an 3\sem 2\WAD - web application design\MultimediaManagement\MultimediaManagement.Dao\obj\Debug\netcoreapp2.2\MultimediaManagement.Dao.pdb
