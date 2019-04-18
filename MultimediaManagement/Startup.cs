@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using MultimediaManagement.Models;
+using MultimediaManagement.Services;
 
 namespace MultimediaManagement
 {
@@ -35,13 +36,15 @@ namespace MultimediaManagement
             });
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddCors();
+            ServiceRegistration.ServiceRegistrator(services);
+
 
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
             {
                 configuration.RootPath = "ClientApp/dist";
             });
-            var connection = @"Server=<<InsertDataBaseHere>>;Database=WADMultimediaManagement;Trusted_Connection=True;ConnectRetryCount=0";
+            var connection = @"Server=DESKTOP-UONO7AU\SQLEXPRESS;Database=MultimediaManagement;Trusted_Connection=True;ConnectRetryCount=0";
             services.AddDbContext<MultimediaManagementContext>(options => options.UseSqlServer(connection));
 
         }

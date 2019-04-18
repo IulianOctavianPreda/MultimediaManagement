@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MultimediaManagement.Models;
+using MultimediaManagement.UoW;
 
 namespace MultimediaManagement.Controllers
 {
@@ -13,32 +14,40 @@ namespace MultimediaManagement.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly MultimediaManagementContext _context;
+        private IUnitOfWork _unitOfWork;
 
-        public UsersController(MultimediaManagementContext context)
+        public UsersController(IUnitOfWork unitOfWork)
         {
-            _context = context;
+            _unitOfWork = unitOfWork;
         }
 
         // GET: api/Users
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetUser()
+        public async Task<IEnumerable<User>> GetUser()
         {
-            return await _context.User.ToListAsync();
+            using (_unitOfWork)
+            {
+                _unitOfWork.Create();
+                return await _unitOfWork.User.GetAll();
+            }
         }
 
         // GET: api/Users/5
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> GetUser(Guid id)
         {
-            var user = await _context.User.FindAsync(id);
-
-            if (user == null)
+            using (_unitOfWork)
             {
-                return NotFound();
-            }
+                _unitOfWork.Create();
+                var user = await _unitOfWork.User.Get(id);
 
-            return user;
+                if (user == null)
+                {
+                    return NotFound();
+                }
+
+                return user;
+            }
         }
 
         // PUT: api/Users/5
