@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MultimediaManagement.Models;
+using MultimediaManagement.UoW;
 
 namespace MultimediaManagement.Controllers
 {
@@ -13,107 +14,102 @@ namespace MultimediaManagement.Controllers
     [ApiController]
     public class PlaceholdersController : ControllerBase
     {
-        private readonly MultimediaManagementContext _context;
+        private IUnitOfWork _unitOfWork;
 
-        public PlaceholdersController(MultimediaManagementContext context)
+        public PlaceholdersController(IUnitOfWork unitOfWork)
         {
-            _context = context;
+            _unitOfWork = unitOfWork;
         }
 
         // GET: api/Placeholders
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Placeholder>>> GetPlaceholder()
+        public async Task<IEnumerable<Placeholder>> GetPlaceholder()
         {
-            return await _context.Placeholder.ToListAsync();
+            using (_unitOfWork)
+            {
+                _unitOfWork.Create();
+                return await _unitOfWork.Placeholder.GetAll();
+            }
         }
 
         // GET: api/Placeholders/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Placeholder>> GetPlaceholder(Guid id)
+        public async Task<ActionResult<Placeholder>> GetPlaceholder([FromRoute] Guid id)
         {
-            var placeholder = await _context.Placeholder.FindAsync(id);
-
-            if (placeholder == null)
+            using (_unitOfWork)
             {
-                return NotFound();
-            }
+                _unitOfWork.Create();
+                var placeholder = await _unitOfWork.Placeholder.Get(id);
 
-            return placeholder;
+                if (placeholder == null)
+                {
+                    return NotFound();
+                }
+
+                return placeholder;
+            }
         }
 
         // PUT: api/Placeholders/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutPlaceholder(Guid id, Placeholder placeholder)
+        public  IActionResult PutPlaceholder([FromRoute] Guid id, [FromBody] Placeholder placeholder)
         {
-            if (id != placeholder.Id)
+            using (_unitOfWork)
             {
-                return BadRequest();
-            }
+                _unitOfWork.Create();
 
-            _context.Entry(placeholder).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!PlaceholderExists(id))
+                if (placeholder == null)
                 {
                     return NotFound();
                 }
-                else
-                {
-                    throw;
-                }
-            }
 
-            return NoContent();
+                if (id != placeholder.Id)
+                {
+                    return BadRequest();
+                }
+                _unitOfWork.Placeholder.Update(placeholder);
+                _unitOfWork.Commit();
+                return Ok(placeholder);
+            }
         }
 
         // POST: api/Placeholders
         [HttpPost]
-        public async Task<ActionResult<Placeholder>> PostPlaceholder(Placeholder placeholder)
+        public ActionResult<Placeholder> PostPlaceholder([FromBody] Placeholder placeholder)
         {
-            _context.Placeholder.Add(placeholder);
-            try
+            using (_unitOfWork)
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
-                if (PlaceholderExists(placeholder.Id))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+                _unitOfWork.Create();
 
-            return CreatedAtAction("GetPlaceholder", new { id = placeholder.Id }, placeholder);
+                placeholder.Id = Guid.NewGuid();
+                _unitOfWork.Placeholder.Add(placeholder);
+
+                _unitOfWork.Commit();
+                return Ok(placeholder);
+            }
         }
 
         // DELETE: api/Placeholders/5
         [HttpDelete("{id}")]
         public async Task<ActionResult<Placeholder>> DeletePlaceholder(Guid id)
         {
-            var placeholder = await _context.Placeholder.FindAsync(id);
-            if (placeholder == null)
+            using (_unitOfWork)
             {
-                return NotFound();
+                _unitOfWork.Create();
+                var placeholder = await _unitOfWork.Placeholder.Get(id);
+                _unitOfWork.Placeholder.Remove(placeholder);
+                _unitOfWork.Commit();
+                return Ok(placeholder);
             }
-
-            _context.Placeholder.Remove(placeholder);
-            await _context.SaveChangesAsync();
-
-            return placeholder;
         }
 
         private bool PlaceholderExists(Guid id)
         {
-            return _context.Placeholder.Any(e => e.Id == id);
+            using (_unitOfWork)
+            {
+                _unitOfWork.Create();
+                return _unitOfWork.Placeholder.Any(e => e.Id == id);
+            }
         }
     }
 }

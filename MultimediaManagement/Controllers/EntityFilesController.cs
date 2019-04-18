@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MultimediaManagement.Models;
+using MultimediaManagement.UoW;
 
 namespace MultimediaManagement.Controllers
 {
@@ -13,107 +14,102 @@ namespace MultimediaManagement.Controllers
     [ApiController]
     public class EntityFilesController : ControllerBase
     {
-        private readonly MultimediaManagementContext _context;
+        private IUnitOfWork _unitOfWork;
 
-        public EntityFilesController(MultimediaManagementContext context)
+        public EntityFilesController(IUnitOfWork unitOfWork)
         {
-            _context = context;
+            _unitOfWork = unitOfWork;
         }
 
         // GET: api/EntityFiles
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<EntityFile>>> GetEntityFile()
+        public async Task<IEnumerable<EntityFile>> GetEntityFile()
         {
-            return await _context.EntityFile.ToListAsync();
+            using (_unitOfWork)
+            {
+                _unitOfWork.Create();
+                return await _unitOfWork.EntityFile.GetAll();
+            }
         }
 
         // GET: api/EntityFiles/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<EntityFile>> GetEntityFile(Guid id)
+        public async Task<ActionResult<EntityFile>> GetEntityFile([FromRoute] Guid id)
         {
-            var entityFile = await _context.EntityFile.FindAsync(id);
-
-            if (entityFile == null)
+            using (_unitOfWork)
             {
-                return NotFound();
-            }
+                _unitOfWork.Create();
+                var entityFile = await _unitOfWork.EntityFile.Get(id);
 
-            return entityFile;
+                if (entityFile == null)
+                {
+                    return NotFound();
+                }
+
+                return entityFile;
+            }
         }
 
         // PUT: api/EntityFiles/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutEntityFile(Guid id, EntityFile entityFile)
+        public async Task<IActionResult> PutEntityFile([FromRoute] Guid id, [FromBody] EntityFile entityFile)
         {
-            if (id != entityFile.Id)
+            using (_unitOfWork)
             {
-                return BadRequest();
-            }
+                _unitOfWork.Create();
 
-            _context.Entry(entityFile).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!EntityFileExists(id))
+                if (entityFile == null)
                 {
                     return NotFound();
                 }
-                else
-                {
-                    throw;
-                }
-            }
 
-            return NoContent();
+                if (id != entityFile.Id)
+                {
+                    return BadRequest();
+                }
+                _unitOfWork.EntityFile.Update(entityFile);
+                _unitOfWork.Commit();
+                return Ok(entityFile);
+            }
         }
 
         // POST: api/EntityFiles
         [HttpPost]
-        public async Task<ActionResult<EntityFile>> PostEntityFile(EntityFile entityFile)
+        public ActionResult<EntityFile> PostEntityFile([FromBody] EntityFile entityFile)
         {
-            _context.EntityFile.Add(entityFile);
-            try
+            using (_unitOfWork)
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
-                if (EntityFileExists(entityFile.Id))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+                _unitOfWork.Create();
 
-            return CreatedAtAction("GetEntityFile", new { id = entityFile.Id }, entityFile);
+                entityFile.Id = Guid.NewGuid();
+                _unitOfWork.EntityFile.Add(entityFile);
+
+                _unitOfWork.Commit();
+                return Ok(entityFile);
+            }
         }
 
         // DELETE: api/EntityFiles/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<EntityFile>> DeleteEntityFile(Guid id)
+        public async Task<ActionResult<EntityFile>> DeleteEntityFile([FromRoute] Guid id)
         {
-            var entityFile = await _context.EntityFile.FindAsync(id);
-            if (entityFile == null)
+            using (_unitOfWork)
             {
-                return NotFound();
+                _unitOfWork.Create();
+                var entityFile = await _unitOfWork.EntityFile.Get(id);
+                _unitOfWork.EntityFile.Remove(entityFile);
+                _unitOfWork.Commit();
+                return Ok(entityFile);
             }
-
-            _context.EntityFile.Remove(entityFile);
-            await _context.SaveChangesAsync();
-
-            return entityFile;
         }
 
-        private bool EntityFileExists(Guid id)
+        private bool EntityFileExists([FromRoute] Guid id)
         {
-            return _context.EntityFile.Any(e => e.Id == id);
+            using (_unitOfWork)
+            {
+                _unitOfWork.Create();
+                return _unitOfWork.EntityFile.Any(e => e.Id == id);
+            }
         }
     }
 }

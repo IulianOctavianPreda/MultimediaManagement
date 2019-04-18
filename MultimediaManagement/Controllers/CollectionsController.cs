@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MultimediaManagement.Models;
+using MultimediaManagement.UoW;
 
 namespace MultimediaManagement.Controllers
 {
@@ -13,107 +14,102 @@ namespace MultimediaManagement.Controllers
     [ApiController]
     public class CollectionsController : ControllerBase
     {
-        private readonly MultimediaManagementContext _context;
+        private IUnitOfWork _unitOfWork;
 
-        public CollectionsController(MultimediaManagementContext context)
+        public CollectionsController(IUnitOfWork unitOfWork)
         {
-            _context = context;
+            _unitOfWork = unitOfWork;
         }
 
         // GET: api/Collections
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Collection>>> GetCollection()
+        public async Task<IEnumerable<Collection>> GetCollection()
         {
-            return await _context.Collection.ToListAsync();
+            using (_unitOfWork)
+            {
+                _unitOfWork.Create();
+                return await _unitOfWork.Collection.GetAll();
+            }
         }
 
         // GET: api/Collections/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Collection>> GetCollection(Guid id)
+        public async Task<ActionResult<Collection>> GetCollection([FromRoute] Guid id)
         {
-            var collection = await _context.Collection.FindAsync(id);
-
-            if (collection == null)
+            using (_unitOfWork)
             {
-                return NotFound();
-            }
+                _unitOfWork.Create();
+                var collection = await _unitOfWork.Collection.Get(id);
 
-            return collection;
+                if (collection == null)
+                {
+                    return NotFound();
+                }
+
+                return collection;
+            }
         }
 
         // PUT: api/Collections/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutCollection(Guid id, Collection collection)
+        public IActionResult PutCollection([FromRoute] Guid id, [FromBody] Collection collection)
         {
-            if (id != collection.Id)
+            using (_unitOfWork)
             {
-                return BadRequest();
-            }
+                _unitOfWork.Create();
 
-            _context.Entry(collection).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!CollectionExists(id))
+                if (collection == null)
                 {
                     return NotFound();
                 }
-                else
-                {
-                    throw;
-                }
-            }
 
-            return NoContent();
+                if (id != collection.Id)
+                {
+                    return BadRequest();
+                }
+                _unitOfWork.Collection.Update(collection);
+                _unitOfWork.Commit();
+                return Ok(collection);
+            }
         }
 
         // POST: api/Collections
         [HttpPost]
-        public async Task<ActionResult<Collection>> PostCollection(Collection collection)
+        public ActionResult<Collection> PostCollection([FromBody] Collection collection)
         {
-            _context.Collection.Add(collection);
-            try
+            using (_unitOfWork)
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
-                if (CollectionExists(collection.Id))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+                _unitOfWork.Create();
 
-            return CreatedAtAction("GetCollection", new { id = collection.Id }, collection);
+                collection.Id = Guid.NewGuid();
+                _unitOfWork.Collection.Add(collection);
+
+                _unitOfWork.Commit();
+                return Ok(collection);
+            }
         }
 
         // DELETE: api/Collections/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Collection>> DeleteCollection(Guid id)
+        public async Task<ActionResult<Collection>> DeleteCollection([FromRoute] Guid id)
         {
-            var collection = await _context.Collection.FindAsync(id);
-            if (collection == null)
+            using (_unitOfWork)
             {
-                return NotFound();
+                _unitOfWork.Create();
+                var collection = await _unitOfWork.Collection.Get(id);
+                _unitOfWork.Collection.Remove(collection);
+                _unitOfWork.Commit();
+                return Ok(collection);
             }
-
-            _context.Collection.Remove(collection);
-            await _context.SaveChangesAsync();
-
-            return collection;
         }
 
-        private bool CollectionExists(Guid id)
+        private bool CollectionExists([FromRoute] Guid id)
         {
-            return _context.Collection.Any(e => e.Id == id);
+            using (_unitOfWork)
+            {
+                _unitOfWork.Create();
+                return _unitOfWork.Collection.Any(e => e.Id == id);
+            }
         }
     }
 }

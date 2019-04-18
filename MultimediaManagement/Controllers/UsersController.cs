@@ -34,7 +34,7 @@ namespace MultimediaManagement.Controllers
 
         // GET: api/Users/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUser(Guid id)
+        public async Task<ActionResult<User>> GetUser([FromRoute] Guid id)
         {
             using (_unitOfWork)
             {
@@ -52,77 +52,64 @@ namespace MultimediaManagement.Controllers
 
         // PUT: api/Users/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutUser(Guid id, User user)
+        public IActionResult PutUser([FromRoute] Guid id, [FromBody] User user)
         {
-            if (id != user.Id)
+            using (_unitOfWork)
             {
-                return BadRequest();
-            }
+                _unitOfWork.Create();
 
-            _context.Entry(user).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!UserExists(id))
+                if (user == null)
                 {
                     return NotFound();
                 }
-                else
-                {
-                    throw;
-                }
-            }
 
-            return NoContent();
+                if (id != user.Id)
+                {
+                    return BadRequest();
+                }
+                _unitOfWork.User.Update(user);
+                _unitOfWork.Commit();
+                return Ok(user);
+            }
         }
 
         // POST: api/Users
         [HttpPost]
-        public async Task<ActionResult<User>> PostUser(User user)
+        public ActionResult<User> PostUser([FromBody] User user)
         {
-            _context.User.Add(user);
-            try
+            using (_unitOfWork)
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
-                if (UserExists(user.Id))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+                _unitOfWork.Create();
 
-            return CreatedAtAction("GetUser", new { id = user.Id }, user);
+                user.Id = Guid.NewGuid();
+                _unitOfWork.User.Add(user);
+
+                _unitOfWork.Commit();
+                return Ok(user);
+            }
         }
 
         // DELETE: api/Users/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<User>> DeleteUser(Guid id)
+        public async Task<ActionResult<User>> DeleteUser([FromRoute] Guid id)
         {
-            var user = await _context.User.FindAsync(id);
-            if (user == null)
+            using (_unitOfWork)
             {
-                return NotFound();
+                _unitOfWork.Create();
+                var user = await _unitOfWork.User.Get(id);
+                _unitOfWork.User.Remove(user);
+                _unitOfWork.Commit();
+                return Ok(user);
             }
-
-            _context.User.Remove(user);
-            await _context.SaveChangesAsync();
-
-            return user;
         }
 
-        private bool UserExists(Guid id)
+        private bool UserExists([FromRoute] Guid id)
         {
-            return _context.User.Any(e => e.Id == id);
+            using (_unitOfWork)
+            {
+                _unitOfWork.Create();
+                return _unitOfWork.User.Any(e => e.Id == id);
+            }
         }
     }
 }
