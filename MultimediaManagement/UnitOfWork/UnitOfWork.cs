@@ -16,8 +16,16 @@ namespace MultimediaManagement.UoW
 
         private MultimediaManagementContext _context;
         public IUserRepository _user;
+        public ICollectionRepository _collection;
+        public IPlaceholderRepository _placeholder;
+        public IEntityFileRepository _entityFile;
+
 
         public IUserRepository User { get => _user; }
+        public ICollectionRepository Collection { get => _collection; }
+        public IPlaceholderRepository Placeholder { get => _placeholder; }
+        public IEntityFileRepository EntityFile { get => _entityFile; }
+
 
         public UnitOfWork(MultimediaManagementContext context)
         {

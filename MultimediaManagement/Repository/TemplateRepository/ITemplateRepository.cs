@@ -15,7 +15,7 @@ namespace MultimediaManagement.Repository
 
         void Add(TEntity entity);
         void AddRange(IEnumerable<TEntity> entities);
-
+        void Update(TEntity entity);
         void Remove(TEntity entity);
         void RemoveRange(IEnumerable<TEntity> entities);
         bool Any(Expression<Func<TEntity, bool>> predicate);

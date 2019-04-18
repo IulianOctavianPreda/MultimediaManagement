@@ -67,5 +67,10 @@ namespace MultimediaManagement.Repository
             return _context.Set<TEntity>().SingleOrDefault(predicate);
         }
 
+        public void Update(TEntity entity)
+        {
+            _context.Set<TEntity>().Update(entity);
+            _context.Entry(entity).State = EntityState.Modified;
+        }
     }
 }

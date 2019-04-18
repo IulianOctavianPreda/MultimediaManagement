@@ -10,5 +10,8 @@ namespace MultimediaManagement.UoW
         void Create();
 
         IUserRepository User { get;}
+        ICollectionRepository Collection { get; }
+        IPlaceholderRepository Placeholder { get; }
+        IEntityFileRepository EntityFile { get; }
     }
 }
