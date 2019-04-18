@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using MultimediaManagement.Models;
+using MultimediaManagement.Services;
 using MultimediaManagement.UoW;
 
 namespace MultimediaManagement.Controllers
@@ -82,6 +80,9 @@ namespace MultimediaManagement.Controllers
                 _unitOfWork.Create();
 
                 user.Id = Guid.NewGuid();
+                var cryproService = new CryptoService();
+                user.Password = cryproService.Sha256_hash(user.Password);
+
                 _unitOfWork.User.Add(user);
 
                 _unitOfWork.Commit();
@@ -109,6 +110,30 @@ namespace MultimediaManagement.Controllers
             {
                 _unitOfWork.Create();
                 return _unitOfWork.User.Any(e => e.Id == id);
+            }
+        }
+
+        [Route("login")]
+        [HttpPost]
+        public async Task<IActionResult> Login([FromBody] User user)
+        {
+            using (_unitOfWork)
+            {
+                _unitOfWork.Create();
+                var loginUser = await _unitOfWork.User.FirstOrDefaultAsync(r => r.Username == user.Username);
+
+                if (loginUser == null)
+                {
+                    return NotFound();
+                }
+                var cryptoService = new CryptoService();
+                user.Password = cryptoService.Sha256_hash(user.Password);
+                if (user.Password != loginUser.Password)
+                {
+                    return BadRequest();
+                }
+                loginUser.Password = null;
+                return Ok(loginUser);
             }
         }
     }

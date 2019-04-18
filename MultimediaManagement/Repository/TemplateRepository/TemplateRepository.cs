@@ -37,7 +37,7 @@ namespace MultimediaManagement.Repository
             return await _context.Set<TEntity>().Where(predicate).ToListAsync();
         }
 
-        public async Task<TEntity> FirstOrDefault(Expression<Func<TEntity, bool>> predicate)
+        public async Task<TEntity> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate)
         {
             return await _context.Set<TEntity>().FirstOrDefaultAsync(predicate);
         }
