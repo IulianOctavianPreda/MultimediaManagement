@@ -11,3 +11,7 @@ G:\L\facultate an 3\sem 2\WAD - web application design\MultimediaManagement\Mult
 G:\L\facultate an 3\sem 2\WAD - web application design\MultimediaManagement\MultimediaManagement.Services\obj\Debug\netcoreapp2.2\MultimediaManagement.Services.RazorTargetAssemblyInfo.cache
 G:\L\facultate an 3\sem 2\WAD - web application design\MultimediaManagement\MultimediaManagement.Services\obj\Debug\netcoreapp2.2\MultimediaManagement.Services.dll
 G:\L\facultate an 3\sem 2\WAD - web application design\MultimediaManagement\MultimediaManagement.Services\obj\Debug\netcoreapp2.2\MultimediaManagement.Services.pdb
+G:\L\facultate an 3\sem 2\WAD - web application design\MultimediaManagement\MultimediaManagement.Services\bin\Debug\netcoreapp2.2\MultimediaManagement.Dao.dll
+G:\L\facultate an 3\sem 2\WAD - web application design\MultimediaManagement\MultimediaManagement.Services\bin\Debug\netcoreapp2.2\MultimediaManagement.Dao.pdb
+G:\L\facultate an 3\sem 2\WAD - web application design\MultimediaManagement\MultimediaManagement.Services\obj\Debug\netcoreapp2.2\MultimediaManagement.Services.csprojAssemblyReference.cache
+G:\L\facultate an 3\sem 2\WAD - web application design\MultimediaManagement\MultimediaManagement.Services\obj\Debug\netcoreapp2.2\MultimediaManagement.Services.csproj.CopyComplete

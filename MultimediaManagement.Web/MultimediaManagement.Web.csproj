@@ -28,7 +28,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\MultimediaManagement.Controllers\MultimediaManagement.Controllers.csproj" />
     <ProjectReference Include="..\MultimediaManagement.Dao\MultimediaManagement.Dao.csproj" />
+    <ProjectReference Include="..\MultimediaManagement.Services\MultimediaManagement.Services.csproj" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

@@ -4438,6 +4438,16 @@
         "runtime": {
           "lib/netstandard1.3/System.Xml.XPath.XDocument.dll": {}
         }
+      },
+      "MultimediaManagement.Dao/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v2.2",
+        "compile": {
+          "bin/placeholder/MultimediaManagement.Dao.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/MultimediaManagement.Dao.dll": {}
+        }
       }
     }
   },
@@ -12080,13 +12090,19 @@
         "system.xml.xpath.xdocument.4.3.0.nupkg.sha512",
         "system.xml.xpath.xdocument.nuspec"
       ]
+    },
+    "MultimediaManagement.Dao/1.0.0": {
+      "type": "project",
+      "path": "../MultimediaManagement.Dao/MultimediaManagement.Dao.csproj",
+      "msbuildProject": "../MultimediaManagement.Dao/MultimediaManagement.Dao.csproj"
     }
   },
   "projectFileDependencyGroups": {
     ".NETCoreApp,Version=v2.2": [
       "Microsoft.AspNetCore.App >= 2.2.0",
       "Microsoft.AspNetCore.Razor.Design >= 2.2.0",
-      "Microsoft.NETCore.App >= 2.2.0"
+      "Microsoft.NETCore.App >= 2.2.0",
+      "MultimediaManagement.Dao >= 1.0.0"
     ]
   },
   "packageFolders": {
@@ -12118,7 +12134,11 @@
       },
       "frameworks": {
         "netcoreapp2.2": {
-          "projectReferences": {}
+          "projectReferences": {
+            "G:\\L\\facultate an 3\\sem 2\\WAD - web application design\\MultimediaManagement\\MultimediaManagement.Dao\\MultimediaManagement.Dao.csproj": {
+              "projectPath": "G:\\L\\facultate an 3\\sem 2\\WAD - web application design\\MultimediaManagement\\MultimediaManagement.Dao\\MultimediaManagement.Dao.csproj"
+            }
+          }
         }
       },
       "warningProperties": {

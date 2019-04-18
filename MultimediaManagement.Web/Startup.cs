@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using MultimediaManagement.Services;
 
 namespace MultimediaManagement.Web
 {
@@ -31,6 +32,8 @@ namespace MultimediaManagement.Web
                         .AllowCredentials();
                     });
             });
+            ServiceRegistration.ServiceRegistrator(services);
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddCors();
 

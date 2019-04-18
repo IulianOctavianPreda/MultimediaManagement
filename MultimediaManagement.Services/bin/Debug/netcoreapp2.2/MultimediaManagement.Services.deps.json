@@ -16,7 +16,7 @@
     "warningsAsErrors": false,
     "optimize": false,
     "keyFile": "",
-    "emitEntryPoint": true,
+    "emitEntryPoint": false,
     "xmlDoc": false,
     "debugType": "portable"
   },
@@ -26,13 +26,22 @@
         "dependencies": {
           "Microsoft.AspNetCore.App": "2.2.0",
           "Microsoft.AspNetCore.Razor.Design": "2.2.0",
-          "Microsoft.NETCore.App": "2.2.0"
+          "Microsoft.NETCore.App": "2.2.0",
+          "MultimediaManagement.Dao": "1.0.0"
         },
         "runtime": {
           "MultimediaManagement.Services.dll": {}
         },
         "compile": {
           "MultimediaManagement.Services.dll": {}
+        }
+      },
+      "MultimediaManagement.Dao/1.0.0": {
+        "runtime": {
+          "MultimediaManagement.Dao.dll": {}
+        },
+        "compile": {
+          "MultimediaManagement.Dao.dll": {}
         }
       },
       "Microsoft.AspNet.WebApi.Client/5.2.6": {
@@ -3233,6 +3242,11 @@
   },
   "libraries": {
     "MultimediaManagement.Services/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "MultimediaManagement.Dao/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
