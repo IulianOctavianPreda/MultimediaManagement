@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MultimediaManagement.Models;
+using MultimediaManagement.Repository;
 using MultimediaManagement.UoW;
 
 namespace MultimediaManagement.Controllers
@@ -14,21 +15,20 @@ namespace MultimediaManagement.Controllers
     [ApiController]
     public class EntityFilesController : ControllerBase
     {
-        private IUnitOfWork _unitOfWork;
+        private IEntityFileRepository _entityFile;
 
-        public EntityFilesController(IUnitOfWork unitOfWork)
+        public EntityFilesController(IEntityFileRepository entityFile)
         {
-            _unitOfWork = unitOfWork;
+            _entityFile = entityFile;
         }
 
         // GET: api/EntityFiles
         [HttpGet]
         public async Task<IEnumerable<EntityFile>> GetEntityFile()
         {
-            using (_unitOfWork)
+            using (_entityFile)
             {
-                _unitOfWork.Create();
-                return await _unitOfWork.EntityFile.GetAll();
+                return await _entityFile.GetAll();
             }
         }
 
@@ -36,10 +36,9 @@ namespace MultimediaManagement.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<EntityFile>> GetEntityFile([FromRoute] Guid id)
         {
-            using (_unitOfWork)
+            using (_entityFile)
             {
-                _unitOfWork.Create();
-                var entityFile = await _unitOfWork.EntityFile.Get(id);
+                var entityFile = await _entityFile.Get(id);
 
                 if (entityFile == null)
                 {
@@ -54,10 +53,8 @@ namespace MultimediaManagement.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutEntityFile([FromRoute] Guid id, [FromBody] EntityFile entityFile)
         {
-            using (_unitOfWork)
+            using (_entityFile)
             {
-                _unitOfWork.Create();
-
                 if (entityFile == null)
                 {
                     return NotFound();
@@ -67,8 +64,8 @@ namespace MultimediaManagement.Controllers
                 {
                     return BadRequest();
                 }
-                _unitOfWork.EntityFile.Update(entityFile);
-                _unitOfWork.Commit();
+                _entityFile.Update(entityFile);
+                _entityFile.Commit();
                 return Ok(entityFile);
             }
         }
@@ -77,14 +74,13 @@ namespace MultimediaManagement.Controllers
         [HttpPost]
         public ActionResult<EntityFile> PostEntityFile([FromBody] EntityFile entityFile)
         {
-            using (_unitOfWork)
+            using (_entityFile)
             {
-                _unitOfWork.Create();
 
                 entityFile.Id = Guid.NewGuid();
-                _unitOfWork.EntityFile.Add(entityFile);
+                _entityFile.Add(entityFile);
 
-                _unitOfWork.Commit();
+                _entityFile.Commit();
                 return Ok(entityFile);
             }
         }
@@ -93,22 +89,20 @@ namespace MultimediaManagement.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<EntityFile>> DeleteEntityFile([FromRoute] Guid id)
         {
-            using (_unitOfWork)
+            using (_entityFile)
             {
-                _unitOfWork.Create();
-                var entityFile = await _unitOfWork.EntityFile.Get(id);
-                _unitOfWork.EntityFile.Remove(entityFile);
-                _unitOfWork.Commit();
+                var entityFile = await _entityFile.Get(id);
+                _entityFile.Remove(entityFile);
+                _entityFile.Commit();
                 return Ok(entityFile);
             }
         }
 
         private bool EntityFileExists([FromRoute] Guid id)
         {
-            using (_unitOfWork)
+            using (_entityFile)
             {
-                _unitOfWork.Create();
-                return _unitOfWork.EntityFile.Any(e => e.Id == id);
+                return _entityFile.Any(e => e.Id == id);
             }
         }
     }

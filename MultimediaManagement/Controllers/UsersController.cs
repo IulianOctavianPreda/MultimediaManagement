@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using MultimediaManagement.Models;
+using MultimediaManagement.Repository;
 using MultimediaManagement.Services;
 using MultimediaManagement.UoW;
 
@@ -12,21 +13,20 @@ namespace MultimediaManagement.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private IUnitOfWork _unitOfWork;
+        private IUserRepository _user;
 
-        public UsersController(IUnitOfWork unitOfWork)
+        public UsersController(IUserRepository user)
         {
-            _unitOfWork = unitOfWork;
+            _user = user;
         }
 
         // GET: api/Users
         [HttpGet]
         public async Task<IEnumerable<User>> GetUser()
         {
-            using (_unitOfWork)
+            using (_user)
             {
-                _unitOfWork.Create();
-                return await _unitOfWork.User.GetAll();
+                return await _user.GetAll();
             }
         }
 
@@ -34,10 +34,9 @@ namespace MultimediaManagement.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> GetUser([FromRoute] Guid id)
         {
-            using (_unitOfWork)
+            using (_user)
             {
-                _unitOfWork.Create();
-                var user = await _unitOfWork.User.Get(id);
+                var user = await _user.Get(id);
 
                 if (user == null)
                 {
@@ -52,9 +51,8 @@ namespace MultimediaManagement.Controllers
         [HttpPut("{id}")]
         public IActionResult PutUser([FromRoute] Guid id, [FromBody] User user)
         {
-            using (_unitOfWork)
+            using (_user)
             {
-                _unitOfWork.Create();
 
                 if (user == null)
                 {
@@ -65,8 +63,8 @@ namespace MultimediaManagement.Controllers
                 {
                     return BadRequest();
                 }
-                _unitOfWork.User.Update(user);
-                _unitOfWork.Commit();
+                _user.Update(user);
+                _user.Commit();
                 return Ok(user);
             }
         }
@@ -75,17 +73,15 @@ namespace MultimediaManagement.Controllers
         [HttpPost]
         public ActionResult<User> PostUser([FromBody] User user)
         {
-            using (_unitOfWork)
+            using (_user)
             {
-                _unitOfWork.Create();
-
                 user.Id = Guid.NewGuid();
                 var cryproService = new CryptoService();
                 user.Password = cryproService.Sha256_hash(user.Password);
 
-                _unitOfWork.User.Add(user);
+                _user.Add(user);
 
-                _unitOfWork.Commit();
+                _user.Commit();
                 return Ok(user);
             }
         }
@@ -94,22 +90,20 @@ namespace MultimediaManagement.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<User>> DeleteUser([FromRoute] Guid id)
         {
-            using (_unitOfWork)
+            using (_user)
             {
-                _unitOfWork.Create();
-                var user = await _unitOfWork.User.Get(id);
-                _unitOfWork.User.Remove(user);
-                _unitOfWork.Commit();
+                var user = await _user.Get(id);
+                _user.Remove(user);
+                _user.Commit();
                 return Ok(user);
             }
         }
 
         private bool UserExists([FromRoute] Guid id)
         {
-            using (_unitOfWork)
+            using (_user)
             {
-                _unitOfWork.Create();
-                return _unitOfWork.User.Any(e => e.Id == id);
+                return _user.Any(e => e.Id == id);
             }
         }
 
@@ -117,10 +111,9 @@ namespace MultimediaManagement.Controllers
         [HttpPost]
         public async Task<IActionResult> Login([FromBody] User user)
         {
-            using (_unitOfWork)
+            using (_user)
             {
-                _unitOfWork.Create();
-                var loginUser = await _unitOfWork.User.FirstOrDefaultAsync(r => r.Username == user.Username);
+                var loginUser = await _user.FirstOrDefaultAsync(r => r.Username == user.Username);
 
                 if (loginUser == null)
                 {

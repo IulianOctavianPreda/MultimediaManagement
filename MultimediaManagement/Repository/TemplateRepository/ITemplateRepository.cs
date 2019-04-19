@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace MultimediaManagement.Repository
 {
-    public interface ITemplateRepository<TEntity>
+    public interface ITemplateRepository<TEntity> : IDisposable
     {
         Task<TEntity> Get(Guid id);
         Task<IEnumerable<TEntity>> GetAll();
@@ -20,5 +20,7 @@ namespace MultimediaManagement.Repository
         void Remove(TEntity entity);
         void RemoveRange(IEnumerable<TEntity> entities);
         bool Any(Expression<Func<TEntity, bool>> predicate);
+
+        void Commit();
     }
 }

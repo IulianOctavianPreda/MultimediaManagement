@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MultimediaManagement.Models;
+using MultimediaManagement.Repository;
 using MultimediaManagement.UoW;
 
 namespace MultimediaManagement.Controllers
@@ -14,21 +15,24 @@ namespace MultimediaManagement.Controllers
     [ApiController]
     public class CollectionsController : ControllerBase
     {
-        private IUnitOfWork _unitOfWork;
+        public ICollectionRepository _collection;
+        public IPlaceholderRepository _placeholder;
 
-        public CollectionsController(IUnitOfWork unitOfWork)
+
+        public CollectionsController(ICollectionRepository collection, IPlaceholderRepository placeholder)
         {
-            _unitOfWork = unitOfWork;
+            _collection = collection;
+            _placeholder = placeholder;
+
         }
 
         // GET: api/Collections
         [HttpGet]
         public async Task<IEnumerable<Collection>> GetCollection()
         {
-            using (_unitOfWork)
+            using (_collection)
             {
-                _unitOfWork.Create();
-                return await _unitOfWork.Collection.GetAll();
+                return await _collection.GetAll();
             }
         }
 
@@ -36,10 +40,10 @@ namespace MultimediaManagement.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Collection>> GetCollection([FromRoute] Guid id)
         {
-            using (_unitOfWork)
+            using (_collection)
             {
-                _unitOfWork.Create();
-                var collection = await _unitOfWork.Collection.Get(id);
+              
+                var collection = await _collection.Get(id);
 
                 if (collection == null)
                 {
@@ -54,9 +58,8 @@ namespace MultimediaManagement.Controllers
         [HttpPut("{id}")]
         public IActionResult PutCollection([FromRoute] Guid id, [FromBody] Collection collection)
         {
-            using (_unitOfWork)
+            using (_collection)
             {
-                _unitOfWork.Create();
 
                 if (collection == null)
                 {
@@ -67,8 +70,8 @@ namespace MultimediaManagement.Controllers
                 {
                     return BadRequest();
                 }
-                _unitOfWork.Collection.Update(collection);
-                _unitOfWork.Commit();
+                _collection.Update(collection);
+                _collection.Commit();
                 return Ok(collection);
             }
         }
@@ -77,14 +80,12 @@ namespace MultimediaManagement.Controllers
         [HttpPost]
         public ActionResult<Collection> PostCollection([FromBody] Collection collection)
         {
-            using (_unitOfWork)
+            using (_collection)
             {
-                _unitOfWork.Create();
-
                 collection.Id = Guid.NewGuid();
-                _unitOfWork.Collection.Add(collection);
+                _collection.Add(collection);
 
-                _unitOfWork.Commit();
+                _collection.Commit();
                 return Ok(collection);
             }
         }
@@ -93,22 +94,20 @@ namespace MultimediaManagement.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Collection>> DeleteCollection([FromRoute] Guid id)
         {
-            using (_unitOfWork)
+            using (_collection)
             {
-                _unitOfWork.Create();
-                var collection = await _unitOfWork.Collection.Get(id);
-                _unitOfWork.Collection.Remove(collection);
-                _unitOfWork.Commit();
+                var collection = await _collection.Get(id);
+                _collection.Remove(collection);
+                _collection.Commit();
                 return Ok(collection);
             }
         }
 
         private bool CollectionExists([FromRoute] Guid id)
         {
-            using (_unitOfWork)
+            using (_collection)
             {
-                _unitOfWork.Create();
-                return _unitOfWork.Collection.Any(e => e.Id == id);
+                return _collection.Any(e => e.Id == id);
             }
         }
 
@@ -116,14 +115,13 @@ namespace MultimediaManagement.Controllers
         public async Task<IActionResult> GetPublicCollections([FromRoute] Guid userId, [FromRoute] int take, [FromRoute] int skip)
         {
 
-            using (_unitOfWork)
+            using (_collection)
             {
-                _unitOfWork.Create();
-                var collections = await _unitOfWork.Collection.Find(r => r.UserId != userId && r.Type == 0, skip, take);
+                var collections = await _collection.Find(r => r.UserId != userId && r.Type == 0, skip, take);
                 foreach (var collection in collections)
                 {
                     collection.User = null;
-                    collection.Placeholder = (ICollection<Placeholder>) await _unitOfWork.Placeholder.Find(r => r.CollectionId == collection.Id,0,10);
+                    collection.Placeholder = (ICollection<Placeholder>) await _placeholder.Find(r => r.CollectionId == collection.Id,0,10);
                     foreach (var placeholder in collection.Placeholder)
                     {
                         placeholder.Collection = null;
@@ -136,16 +134,15 @@ namespace MultimediaManagement.Controllers
         [HttpGet("public/{id}/{take}/{skip}/{keywords}")]
         public async Task<IActionResult> GetPublicCollectionsWithKeywords([FromRoute] Guid userId, [FromRoute] int take, [FromRoute] int skip, [FromRoute] String keywords)
         {
-            using (_unitOfWork)
+            using (_collection)
             {
-                _unitOfWork.Create();
                 var keywordsArr = keywords.Split(',');
-                var collections = await _unitOfWork.Collection.Find(r => r.UserId != userId && r.Type == 0 && keywordsArr.Any(el => r.Keywords.Contains(el)), skip, take);
+                var collections = await _collection.Find(r => r.UserId != userId && r.Type == 0 && keywordsArr.Any(el => r.Keywords.Contains(el)), skip, take);
 
                 foreach (var collection in collections)
                 {
                     collection.User = null;
-                    collection.Placeholder = (ICollection<Placeholder>)await _unitOfWork.Placeholder.Find(r => r.CollectionId == collection.Id, 0, 10);
+                    collection.Placeholder = (ICollection<Placeholder>)await _placeholder.Find(r => r.CollectionId == collection.Id, 0, 10);
                     foreach (var placeholder in collection.Placeholder)
                     {
                         placeholder.Collection = null;
@@ -158,14 +155,13 @@ namespace MultimediaManagement.Controllers
         [HttpGet("{id}/{take}/{skip}")]
         public async Task<IActionResult> GetCollectionsForUser([FromRoute] Guid userId, [FromRoute] int take, [FromRoute] int skip)
         {
-            using (_unitOfWork)
+            using (_collection)
             {
-                _unitOfWork.Create();
-                var collections = await _unitOfWork.Collection.Find(r => r.UserId == userId, skip, take);
+                var collections = await _collection.Find(r => r.UserId == userId, skip, take);
                 foreach (var collection in collections)
                 {
                     collection.User = null;
-                    collection.Placeholder = (ICollection<Placeholder>)await _unitOfWork.Placeholder.Find(r => r.CollectionId == collection.Id, 0, 10);
+                    collection.Placeholder = (ICollection<Placeholder>)await _collection.Find(r => r.CollectionId == collection.Id, 0, 10);
                     foreach (var placeholder in collection.Placeholder)
                     {
                         placeholder.Collection = null;

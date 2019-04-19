@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using MultimediaManagement.Repository;
 using MultimediaManagement.UoW;
 using System;
 using System.Collections.Generic;
@@ -13,8 +14,10 @@ namespace MultimediaManagement.Services
         {
             if (services != null)
             {  
-                services.AddScoped<IUnitOfWork, UnitOfWork>();
-
+                services.AddScoped<IUserRepository, UserRepository>();
+                services.AddScoped<IPlaceholderRepository, PlaceholderRepository>();
+                services.AddScoped<ICollectionRepository, CollectionRepository>();
+                services.AddScoped<IEntityFileRepository, EntityFileRepository>();
             }
         }
     }

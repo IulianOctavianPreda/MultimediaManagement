@@ -5,12 +5,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using Microsoft.Win32.SafeHandles;
+using System.Runtime.InteropServices;
+
 
 namespace MultimediaManagement.Repository
 {
-    public abstract class TemplateRepository<TEntity> : ITemplateRepository<TEntity> where TEntity : class
+    public abstract class TemplateRepository<TEntity> : ITemplateRepository<TEntity> where TEntity : class , IDisposable
     {
         protected MultimediaManagementContext _context { get; set; }
+
+        // Flag: Has Dispose already been called?
+        bool disposed = false;
+        // Instantiate a SafeHandle instance.
+        SafeHandle handle = new SafeFileHandle(IntPtr.Zero, true);
+
 
         public  TemplateRepository(MultimediaManagementContext context)
         {
@@ -76,6 +85,32 @@ namespace MultimediaManagement.Repository
         {
             _context.Set<TEntity>().Update(entity);
             _context.Entry(entity).State = EntityState.Modified;
+        }
+
+        public void Commit()
+        {
+            _context.SaveChanges();
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        // Protected implementation of Dispose pattern.
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposed)
+                return;
+
+            if (disposing)
+            {
+                handle.Dispose();
+                _context.Dispose();
+                // Free any other managed objects here.
+            }
+            disposed = true;
         }
     }
 }

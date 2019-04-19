@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MultimediaManagement.Models;
+using MultimediaManagement.Repository;
 using MultimediaManagement.UoW;
 
 namespace MultimediaManagement.Controllers
@@ -14,21 +15,20 @@ namespace MultimediaManagement.Controllers
     [ApiController]
     public class PlaceholdersController : ControllerBase
     {
-        private IUnitOfWork _unitOfWork;
+        private IPlaceholderRepository _placeholder;
 
-        public PlaceholdersController(IUnitOfWork unitOfWork)
+        public PlaceholdersController(IPlaceholderRepository placeholder)
         {
-            _unitOfWork = unitOfWork;
+            _placeholder = placeholder;
         }
 
         // GET: api/Placeholders
         [HttpGet]
         public async Task<IEnumerable<Placeholder>> GetPlaceholder()
         {
-            using (_unitOfWork)
+            using (_placeholder)
             {
-                _unitOfWork.Create();
-                return await _unitOfWork.Placeholder.GetAll();
+                return await _placeholder.GetAll();
             }
         }
 
@@ -36,10 +36,9 @@ namespace MultimediaManagement.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Placeholder>> GetPlaceholder([FromRoute] Guid id)
         {
-            using (_unitOfWork)
+            using (_placeholder)
             {
-                _unitOfWork.Create();
-                var placeholder = await _unitOfWork.Placeholder.Get(id);
+                var placeholder = await _placeholder.Get(id);
 
                 if (placeholder == null)
                 {
@@ -54,9 +53,8 @@ namespace MultimediaManagement.Controllers
         [HttpPut("{id}")]
         public  IActionResult PutPlaceholder([FromRoute] Guid id, [FromBody] Placeholder placeholder)
         {
-            using (_unitOfWork)
+            using (_placeholder)
             {
-                _unitOfWork.Create();
 
                 if (placeholder == null)
                 {
@@ -67,8 +65,8 @@ namespace MultimediaManagement.Controllers
                 {
                     return BadRequest();
                 }
-                _unitOfWork.Placeholder.Update(placeholder);
-                _unitOfWork.Commit();
+                _placeholder.Update(placeholder);
+                _placeholder.Commit();
                 return Ok(placeholder);
             }
         }
@@ -77,14 +75,13 @@ namespace MultimediaManagement.Controllers
         [HttpPost]
         public ActionResult<Placeholder> PostPlaceholder([FromBody] Placeholder placeholder)
         {
-            using (_unitOfWork)
+            using (_placeholder)
             {
-                _unitOfWork.Create();
 
                 placeholder.Id = Guid.NewGuid();
-                _unitOfWork.Placeholder.Add(placeholder);
+                _placeholder.Add(placeholder);
 
-                _unitOfWork.Commit();
+                _placeholder.Commit();
                 return Ok(placeholder);
             }
         }
@@ -93,22 +90,20 @@ namespace MultimediaManagement.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Placeholder>> DeletePlaceholder(Guid id)
         {
-            using (_unitOfWork)
+            using (_placeholder)
             {
-                _unitOfWork.Create();
-                var placeholder = await _unitOfWork.Placeholder.Get(id);
-                _unitOfWork.Placeholder.Remove(placeholder);
-                _unitOfWork.Commit();
+                var placeholder = await _placeholder.Get(id);
+                _placeholder.Remove(placeholder);
+                _placeholder.Commit();
                 return Ok(placeholder);
             }
         }
 
         private bool PlaceholderExists(Guid id)
         {
-            using (_unitOfWork)
+            using (_placeholder)
             {
-                _unitOfWork.Create();
-                return _unitOfWork.Placeholder.Any(e => e.Id == id);
+                return _placeholder.Any(e => e.Id == id);
             }
         }
     }
