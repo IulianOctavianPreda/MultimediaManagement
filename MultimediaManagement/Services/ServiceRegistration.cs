@@ -14,10 +14,8 @@ namespace MultimediaManagement.Services
             if (services != null)
             {  
                 services.AddScoped<IUnitOfWork, UnitOfWork>();
-               //services.AddScoped<ITblCourseRepository, TblCourseRepository>();
 
             }
-
         }
     }
 }
