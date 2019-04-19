@@ -35,6 +35,9 @@ namespace MultimediaManagement.UoW
         public void Create()
         {
             _user = new UserRepository(_context);
+            _collection = new CollectionRepository(_context);
+            _placeholder = new PlaceholderRepository(_context);
+            _entityFile = new EntityFileRepository(_context);
         }
 
         public void Commit()
