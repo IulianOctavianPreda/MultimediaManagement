@@ -111,5 +111,68 @@ namespace MultimediaManagement.Controllers
                 return _unitOfWork.Collection.Any(e => e.Id == id);
             }
         }
+
+        [HttpGet("public/{id}/{take}/{skip}")]
+        public async Task<IActionResult> GetPublicCollections([FromRoute] Guid userId, [FromRoute] int take, [FromRoute] int skip)
+        {
+
+            using (_unitOfWork)
+            {
+                _unitOfWork.Create();
+                var collections = await _unitOfWork.Collection.Find(r => r.UserId != userId && r.Type == 0, skip, take);
+                foreach (var collection in collections)
+                {
+                    collection.User = null;
+                    collection.Placeholder = (ICollection<Placeholder>) await _unitOfWork.Placeholder.Find(r => r.CollectionId == collection.Id,0,10);
+                    foreach (var placeholder in collection.Placeholder)
+                    {
+                        placeholder.Collection = null;
+                    }
+                }
+                return Ok(collections);
+            }
+        }
+
+        [HttpGet("public/{id}/{take}/{skip}/{keywords}")]
+        public async Task<IActionResult> GetPublicCollectionsWithKeywords([FromRoute] Guid userId, [FromRoute] int take, [FromRoute] int skip, [FromRoute] String keywords)
+        {
+            using (_unitOfWork)
+            {
+                _unitOfWork.Create();
+                var keywordsArr = keywords.Split(',');
+                var collections = await _unitOfWork.Collection.Find(r => r.UserId != userId && r.Type == 0 && keywordsArr.Any(el => r.Keywords.Contains(el)), skip, take);
+
+                foreach (var collection in collections)
+                {
+                    collection.User = null;
+                    collection.Placeholder = (ICollection<Placeholder>)await _unitOfWork.Placeholder.Find(r => r.CollectionId == collection.Id, 0, 10);
+                    foreach (var placeholder in collection.Placeholder)
+                    {
+                        placeholder.Collection = null;
+                    }
+                }
+                return Ok(collections);
+            }
+        }
+
+        [HttpGet("{id}/{take}/{skip}")]
+        public async Task<IActionResult> GetCollectionsForUser([FromRoute] Guid userId, [FromRoute] int take, [FromRoute] int skip)
+        {
+            using (_unitOfWork)
+            {
+                _unitOfWork.Create();
+                var collections = await _unitOfWork.Collection.Find(r => r.UserId == userId, skip, take);
+                foreach (var collection in collections)
+                {
+                    collection.User = null;
+                    collection.Placeholder = (ICollection<Placeholder>)await _unitOfWork.Placeholder.Find(r => r.CollectionId == collection.Id, 0, 10);
+                    foreach (var placeholder in collection.Placeholder)
+                    {
+                        placeholder.Collection = null;
+                    }
+                }
+                return Ok(collections);
+            }
+        }
     }
 }
