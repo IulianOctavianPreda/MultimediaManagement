@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using MultimediaManagement.Models;
 using MultimediaManagement.Repository;
 using MultimediaManagement.Services;
-using MultimediaManagement.UoW;
 
 namespace MultimediaManagement.Controllers
 {

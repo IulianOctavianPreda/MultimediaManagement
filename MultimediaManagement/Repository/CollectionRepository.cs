@@ -9,5 +9,16 @@ namespace MultimediaManagement.Repository
         {
 
         }
+
+        private bool _disposed = false;
+
+        public override void Dispose()
+        {
+            if (!_disposed)
+            {
+                _disposed = true;
+            }
+            base.Dispose();
+        }
     }
 }

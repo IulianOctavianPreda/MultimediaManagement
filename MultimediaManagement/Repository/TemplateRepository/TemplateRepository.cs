@@ -11,7 +11,7 @@ using System.Runtime.InteropServices;
 
 namespace MultimediaManagement.Repository
 {
-    public abstract class TemplateRepository<TEntity> : ITemplateRepository<TEntity> where TEntity : class , IDisposable
+    public abstract class TemplateRepository<TEntity> : IDisposable, ITemplateRepository<TEntity> where TEntity : class
     {
         protected MultimediaManagementContext _context { get; set; }
 
@@ -92,7 +92,7 @@ namespace MultimediaManagement.Repository
             _context.SaveChanges();
         }
 
-        public void Dispose()
+        public virtual void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);

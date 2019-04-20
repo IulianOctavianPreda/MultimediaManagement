@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MultimediaManagement.Models;
 using MultimediaManagement.Repository;
-using MultimediaManagement.UoW;
 
 namespace MultimediaManagement.Controllers
 {
@@ -121,11 +120,15 @@ namespace MultimediaManagement.Controllers
                 foreach (var collection in collections)
                 {
                     collection.User = null;
-                    collection.Placeholder = (ICollection<Placeholder>) await _placeholder.Find(r => r.CollectionId == collection.Id,0,10);
-                    foreach (var placeholder in collection.Placeholder)
+                    using (_placeholder)
                     {
-                        placeholder.Collection = null;
+                        collection.Placeholder = (ICollection<Placeholder>)await _placeholder.Find(r => r.CollectionId == collection.Id, 0, 10);
+                        foreach (var placeholder in collection.Placeholder)
+                        {
+                            placeholder.Collection = null;
+                        }
                     }
+                    
                 }
                 return Ok(collections);
             }
@@ -161,7 +164,7 @@ namespace MultimediaManagement.Controllers
                 foreach (var collection in collections)
                 {
                     collection.User = null;
-                    collection.Placeholder = (ICollection<Placeholder>)await _collection.Find(r => r.CollectionId == collection.Id, 0, 10);
+                    collection.Placeholder = (ICollection<Placeholder>)await _placeholder.Find(r => r.CollectionId == collection.Id, 0, 10);
                     foreach (var placeholder in collection.Placeholder)
                     {
                         placeholder.Collection = null;

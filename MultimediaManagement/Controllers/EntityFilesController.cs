@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MultimediaManagement.Models;
 using MultimediaManagement.Repository;
-using MultimediaManagement.UoW;
 
 namespace MultimediaManagement.Controllers
 {
@@ -51,7 +50,7 @@ namespace MultimediaManagement.Controllers
 
         // PUT: api/EntityFiles/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutEntityFile([FromRoute] Guid id, [FromBody] EntityFile entityFile)
+        public IActionResult PutEntityFile([FromRoute] Guid id, [FromBody] EntityFile entityFile)
         {
             using (_entityFile)
             {
