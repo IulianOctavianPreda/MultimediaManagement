@@ -68,23 +68,6 @@ namespace MultimediaManagement.Controllers
             }
         }
 
-        // POST: api/Users
-        [HttpPost]
-        public ActionResult<User> PostUser([FromBody] User user)
-        {
-            using (_user)
-            {
-                user.Id = Guid.NewGuid();
-                var cryproService = new CryptoService();
-                user.Password = cryproService.Sha256_hash(user.Password);
-
-                _user.Add(user);
-
-                _user.Commit();
-                return Ok(user);
-            }
-        }
-
         // DELETE: api/Users/5
         [HttpDelete("{id}")]
         public async Task<ActionResult<User>> DeleteUser([FromRoute] Guid id)
@@ -106,26 +89,82 @@ namespace MultimediaManagement.Controllers
             }
         }
 
-        [Route("login")]
+
         [HttpPost]
+        [Route("login")]
         public async Task<IActionResult> Login([FromBody] User user)
         {
             using (_user)
             {
+                
                 var loginUser = await _user.FirstOrDefaultAsync(r => r.Username == user.Username);
 
                 if (loginUser == null)
                 {
                     return NotFound();
                 }
-                var cryptoService = new CryptoService();
-                user.Password = cryptoService.Sha256_hash(user.Password);
-                if (user.Password != loginUser.Password)
+
+                if (user.Username == "guest")
+                {
+                    loginUser.ModifiedOn = DateTime.Now;
+                    _user.Update(loginUser);
+                    _user.Commit();
+
+                    return Ok(loginUser);
+                }
+
+                else
+                {
+                    var cryptoService = new CryptoService();
+                    user.Password = cryptoService.Sha256_hash(user.Password);
+             
+
+                    if (user.Password != loginUser.Password)
+                    {
+                        return BadRequest();
+                    }
+
+                    loginUser.ModifiedOn = DateTime.Now;
+                    _user.Update(user);
+                    _user.Commit();
+                    loginUser.Password = null;
+
+                    return Ok(loginUser);
+                }
+                
+            }
+        }
+
+ 
+        [HttpPost]
+        [Route("signup")]
+        public async Task<IActionResult> Signup([FromBody] User user)
+        {
+            using (_user)
+            {
+                var dbUser = await _user.FirstOrDefaultAsync(r => r.Username == user.Username);
+
+                if (dbUser != null)
                 {
                     return BadRequest();
                 }
-                loginUser.Password = null;
-                return Ok(loginUser);
+                else
+                {
+                    user.Id = Guid.NewGuid();
+
+                    var cryptoService = new CryptoService();
+                    user.Password = cryptoService.Sha256_hash(user.Password);
+                    user.ModifiedOn = DateTime.Now;
+                    user.Token = Guid.NewGuid();
+           
+                    _user.Add(user);
+                    _user.Commit();
+
+                    user.Password = null;
+
+                    return Ok(user);
+                }
+                
             }
         }
     }

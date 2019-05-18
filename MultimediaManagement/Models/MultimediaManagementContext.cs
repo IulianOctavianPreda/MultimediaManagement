@@ -24,7 +24,7 @@ namespace MultimediaManagement.Models
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Server=localhost;Database=MultimediaManagement;Trusted_Connection=True;");
+                optionsBuilder.UseSqlServer("Server=localhost;Database=WADMultimediaManagement;Trusted_Connection=True;");
             }
         }
 

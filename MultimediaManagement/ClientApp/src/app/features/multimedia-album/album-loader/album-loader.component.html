@@ -1,0 +1,20 @@
+<div [ngSwitch]="extension" class="wh-100 ">
+  <div *ngSwitchCase="'audio'" class="wh-100">
+    <app-audio-module source="{{ source }}" class="wh-100"> </app-audio-module>
+  </div>
+  <div *ngSwitchCase="'video'" class="wh-100">
+    <app-video-module source="{{ source }}" class="wh-100"> </app-video-module>
+  </div>
+  <div *ngSwitchCase="'image'" class="wh-100">
+    <app-image-module source="{{ source }}" class="wh-100"> </app-image-module>
+  </div>
+  <div *ngSwitchCase="'pdf'" class="wh-100">
+    <app-pdf-module source="{{ source }}" class="wh-100"> </app-pdf-module>
+  </div>
+  <div *ngSwitchCase="'svg'" class="wh-100 ">
+    <app-svg-module source="{{ source }}" class="wh-100 "> </app-svg-module>
+  </div>
+  <div *ngSwitchCase="'youtube'" class="wh-100 h-90">
+    <app-youtube-module source="{{ source }}" class="wh-100 "> </app-youtube-module>
+  </div>
+</div>

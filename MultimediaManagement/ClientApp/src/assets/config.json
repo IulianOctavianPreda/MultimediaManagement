@@ -1,0 +1,23 @@
+{
+  "gridSize": 7,
+  "bootstrapAccentPrimary": "danger",
+  "bootstrapAccentSecondary": "dark",
+
+  "take": 10,
+  "skip": 0,
+  "collectionUrl": "http://localhost:49882/api/Collections/$userId/$take/$skip",
+  "suggestedCollectionUrl": "http://localhost:49882/api/Collections/public/$userId/$take/$skip",
+
+  "deleteCollectionUrl": "http://localhost:49882/api/Collections/$collectionId",
+  "addCollectionUrl": "http://localhost:49882/api/Collections",
+
+  "albumUrl": "http://localhost:49882/api/Placeholders/$collectionId/$take/$skip",
+
+  "suggestedEntityUrl": "http://localhost:49882/api/Placeholders/$collectionId/$take/$skip",
+  "deleteEntityUrl": "http://localhost:49882/api/Placeholders/$entityId",
+  "addEntitiesUrl": "http://localhost:49882/api/Placeholders",
+  "getEntityUrl": "http://localhost:49882/api/Placeholders/$entityId",
+  "slideShow": false,
+  "lockSlideShow": false,
+  "slideShowTimeBeforeNext": 5000
+}

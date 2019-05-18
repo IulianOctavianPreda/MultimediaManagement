@@ -1,0 +1,229 @@
+<div id="collection-of-multimedia-albums" class="w-100 h-100 p-2 box roboto-font">
+  <!--Button Area-->
+  <div id="button-area" class="w-100 d-flex-block justify-content-between box">
+    <div class="w-resizable-35 d-flex justify-content-between-start">
+      <button
+        type="button"
+        id="addCollectionButton"
+        class="btn btn-{{ bootstrapAccentPrimary }} w-min-140px"
+        data-toggle="modal"
+        data-target="#addCollectionModal"
+      >
+        Add Collection
+      </button>
+      <button
+        type="button"
+        id="deleteCollectionButton"
+        class="btn btn-{{ _deleteAccent }} w-min-140px"
+        (click)="toggleDeleteButton()"
+      >
+        Delete Collection
+      </button>
+    </div>
+
+    <div class="w-resizable-20 d-flex justify-content-between-end box">
+      <!-- Toggle Switch -->
+      <div class="w-140px d-flex flex-nowrap">
+        <div class="w-60px ml-2 d-flex align-items-center box">
+          <label class="switch box">
+            <input type="checkbox" [(ngModel)]="_toggleView" />
+            <span class="slider round"></span>
+          </label>
+        </div>
+        <button
+          type="button"
+          id="suggestionsCollectionButton"
+          class="btn btn-{{ bootstrapAccentPrimary }} w-80px"
+          data-toggle="modal"
+          data-target="#seeSuggestionsModal"
+        >
+          Tip
+        </button>
+      </div>
+      <!-- Filter Box -->
+      <div class="w-min-140px w-max-140px box">
+        <input class="form-control" type="text" placeholder="Search.." [(ngModel)]="_searchText" />
+      </div>
+    </div>
+  </div>
+
+  <!--Collections Area-->
+  <div id="collections-area" class="w-100 h-85 mt-3 d-flex-block flex-wrap box">
+    <div
+      class="{{ 'grid-size-' + gridSize }}"
+      *ngFor="let collection of (_collectionData | filterCollections: _searchText)"
+      (click)="accessOrDelete(collection)"
+      data-toggle="modal"
+      [attr.data-target]="_modalDeleteConfirmation"
+    >
+      <!--Placeholder Area-->
+      <div [ngSwitch]="_toggleView" class="w-99 box position-relative">
+        <div *ngSwitchDefault id="placeholder2d" class="w-99 box position-relative">
+          <img class="w-100 thumbnail hover-shadow" src="{{ collection.placeholder[0].data }}" />
+        </div>
+        <div
+          *ngSwitchCase="1"
+          id="placeholder3d"
+          class="w-99 box position-relative h-min-250px d-flex justify-content-center"
+        >
+          <img
+            *ngFor="let placeholder of collection.placeholder.slice(0, 5); let i = index"
+            src="{{ placeholder.data }}"
+            class="w-max-200px thumbnail layer-stack  layer-{{ i }} "
+          />
+        </div>
+      </div>
+
+      <!--Collection's Name Area-->
+      <div
+        id="collection-name"
+        class="w-99 d-flex align-items-center justify-content-center text-center box break-word text-overflow-ellipsis"
+      >
+        {{ collection.name }}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal add Collection -->
+<div
+  class="modal fade roboto-font"
+  id="addCollectionModal"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="addCollection"
+  aria-hidden="true"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addCollection">Create a new Collection?</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="_addNewCollectionForm">
+          <div class="form-group">
+            <input type="text" class="form-control d-none" formControlName="collectionName" />
+            <label for="Name" class="col-form-label">Name:</label>
+            <input type="text" class="form-control" id="Name" formControlName="collectionName" />
+            <label class="" for="collectionType">Type</label>
+            <select class="custom-select" id="collectionType" formControlName="collectionType">
+              <option selected disabled>Choose...</option>
+              <option value="0">Public</option>
+              <option value="1">Private</option>
+            </select>
+            <label for="Keywords" class="col-form-label">Keywords:</label>
+            <input type="text" class="form-control" id="keywords" formControlName="keywords" />
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-{{ bootstrapAccentSecondary }}" data-dismiss="modal">
+          Close
+        </button>
+        <button
+          type="button"
+          class="btn btn-{{ bootstrapAccentPrimary }}"
+          data-dismiss="modal"
+          (click)="addCollection()"
+        >
+          Save changes
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal see Suggestions -->
+<div
+  class="modal fade roboto-font"
+  id="seeSuggestionsModal"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="seeSuggestions"
+  aria-hidden="true"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="seeSuggestions">Suggestions</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body d-flex-block flex-wrap box">
+        <div
+          class="{{ 'grid-size-' + gridSizeSuggestions }}"
+          *ngFor="let collection of _suggestedCollectionData"
+          (click)="accessRecommendedCollection(collection)"
+          data-dismiss="modal"
+        >
+          <!--Placeholder Area-->
+          <div class="w-99 box position-relative">
+            <div id="placeholder2d" class="w-99 box position-relative">
+              <img
+                class="w-100 thumbnail hover-shadow"
+                src="{{ collection.placeholder[0].data }}"
+              />
+            </div>
+          </div>
+          <!--Collection's Name Area-->
+          <div
+            id="collection-name"
+            class="w-99 d-flex align-items-center justify-content-center text-center box break-word text-overflow-ellipsis"
+          >
+            {{ collection.name }}
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-{{ bootstrapAccentSecondary }}" data-dismiss="modal">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div
+  class="modal fade roboto-font"
+  id="deleteConfirmationModal"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="deleteConfirmation"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="deleteConfirmation">Confirm Delete</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <p>Are you sure you want to delete the collection, this procedure is irreversible.</p>
+        <p>Do you want to proceed?</p>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-{{ bootstrapAccentSecondary }}" data-dismiss="modal">
+          Cancel
+        </button>
+        <button
+          class="btn btn-{{ bootstrapAccentPrimary }}"
+          (click)="deleteCollection()"
+          data-dismiss="modal"
+        >
+          Delete
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Microphone Button -->
+<div id="floatingMicrophone" class="notRecording">
+  <img class="w-50" src="../../../assets/microphoneIcon.png" />
+</div>

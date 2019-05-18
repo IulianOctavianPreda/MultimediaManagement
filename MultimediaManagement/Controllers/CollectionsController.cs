@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,12 +17,13 @@ namespace MultimediaManagement.Controllers
     {
         public ICollectionRepository _collection;
         public IPlaceholderRepository _placeholder;
+        private IUserRepository _user;
 
-
-        public CollectionsController(ICollectionRepository collection, IPlaceholderRepository placeholder)
+        public CollectionsController(ICollectionRepository collection, IPlaceholderRepository placeholder, IUserRepository user)
         {
             _collection = collection;
             _placeholder = placeholder;
+            _user = user;
 
         }
 
@@ -35,23 +37,7 @@ namespace MultimediaManagement.Controllers
             }
         }
 
-        // GET: api/Collections/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Collection>> GetCollection([FromRoute] Guid id)
-        {
-            using (_collection)
-            {
-              
-                var collection = await _collection.Get(id);
-
-                if (collection == null)
-                {
-                    return NotFound();
-                }
-
-                return collection;
-            }
-        }
+        
 
         // PUT: api/Collections/5
         [HttpPut("{id}")]
@@ -116,7 +102,17 @@ namespace MultimediaManagement.Controllers
 
             using (_collection)
             {
-                var collections = await _collection.Find(r => r.UserId != userId && r.Type == 0, skip, take);
+                IEnumerable<Collection> collections;
+                if (_user.FirstOrDefault(x => x.Id == userId).Username == "guest")
+                {
+                    collections = await _collection.Find(r => r.UserId == userId && r.Type == 0, skip, take);
+                    var collection1 = await _collection.Find(r => r.UserId != userId && r.Type == 0, skip, take);
+                    collections = collections.Concat(collection1);
+                }
+                else
+                {
+                    collections = await _collection.Find(r => r.UserId != userId && r.Type == 0, skip, take);
+                }
                 foreach (var collection in collections)
                 {
                     collection.User = null;
@@ -140,7 +136,18 @@ namespace MultimediaManagement.Controllers
             using (_collection)
             {
                 var keywordsArr = keywords.Split(',');
-                var collections = await _collection.Find(r => r.UserId != userId && r.Type == 0 && keywordsArr.Any(el => r.Keywords.Contains(el)), skip, take);
+                IEnumerable<Collection> collections;
+                if (_user.FirstOrDefault(x => x.Id == userId).Username == "guest")
+                {
+                    collections = await _collection.Find(r => r.UserId == userId && r.Type == 0 && keywordsArr.Any(el => r.Keywords.Contains(el)), skip, take);
+                    var collection1 = await _collection.Find(r => r.UserId != userId && r.Type == 0 && keywordsArr.Any(el => r.Keywords.Contains(el)), skip, take);
+                    collections = collections.Concat(collection1);
+                }
+                else
+                {
+                    collections = await _collection.Find(r => r.UserId != userId && r.Type == 0 && keywordsArr.Any(el => r.Keywords.Contains(el)), skip, take);
+                }
+                
 
                 foreach (var collection in collections)
                 {

@@ -1,0 +1,197 @@
+// Small tablets and large smartphones (landscape view)
+$screen-sm-min: 576px;
+
+// Small tablets (portrait view)
+$screen-md-min: 768px;
+
+// Tablets and small desktops
+$screen-lg-min: 769px;
+
+// Large tablets and desktops
+$screen-xl-min: 992px;
+
+// Small devices
+@mixin sm {
+  @media (max-width: #{$screen-sm-min}) {
+    @content;
+  }
+}
+
+// Medium devices
+@mixin md {
+  @media (max-width: #{$screen-md-min}) {
+    @content;
+  }
+}
+
+// Large devices
+@mixin lg {
+  @media (min-width: #{$screen-lg-min}) {
+    @content;
+  }
+}
+
+// Extra large devices
+@mixin xl {
+  @media (min-width: #{$screen-xl-min}) {
+    @content;
+  }
+}
+
+$amountOfSizes: 100;
+@for $i from 1 through $amountOfSizes {
+  .w-#{$i} {
+    width: $i#{"%"};
+  }
+  .h-#{$i} {
+    height: $i#{"%"};
+  }
+  .w-max-#{$i} {
+    max-width: $i#{"%"};
+  }
+  .h-max-#{$i} {
+    max-height: $i#{"%"};
+  }
+  .w-#{$i * 5}px {
+    width: $i * 5px;
+  }
+  .h-#{$i * 5}px {
+    height: $i * 5px;
+  }
+  .w-max-#{$i * 5}px {
+    max-width: $i * 5px;
+  }
+  .h-max-#{$i * 5}px {
+    max-height: $i * 5px;
+  }
+
+  .w-min-#{$i * 5}px {
+    min-width: $i * 5px;
+  }
+  .h-min-#{$i * 5}px {
+    min-height: $i * 5px;
+  }
+
+  .ml-#{$i * 5}px {
+    margin-left: $i * 5px;
+  }
+  .mr-#{$i * 5}px {
+    margin-right: $i * 5px;
+  }
+
+  .grid-size-#{$i} {
+    @include md {
+      width: 100%;
+    }
+    // prettier-ignore
+    @include lg {
+      width: round(100 / $i)#{"%"};
+    }
+  }
+  .w-resizable-#{$i} {
+    @include md {
+      width: 100%;
+    }
+    @include lg {
+      width: $i#{"%"};
+    }
+  }
+  .wh-#{$i} {
+    @include md {
+      width: $i#{"%"};
+    }
+    // prettier-ignore
+    @include lg {
+      height: $i#{"%"};
+      min-width: ($i/1.5)#{"%"};
+    }
+  }
+  // .h-resizable-#{$i} {
+
+  //   @include md {
+  //     height: 100%;
+  //   }
+  //   @include lg {
+  //     height: $i#{"%"};
+  //   }
+  // }
+}
+.justify-content-between-start {
+  @include md {
+    justify-content: space-between !important;
+  }
+  @include lg {
+    justify-content: flex-start;
+  }
+}
+.justify-content-between-end {
+  @include md {
+    justify-content: space-between !important;
+  }
+  @include lg {
+    justify-content: flex-end;
+  }
+}
+
+.d-flex-block {
+  @include md {
+    display: block;
+  }
+  @include lg {
+    display: flex;
+  }
+}
+.box {
+  box-sizing: border-box;
+}
+
+.break-word {
+  word-wrap: break-word;
+}
+.text-overflow-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+// for 3D effect
+
+.layer-stack {
+  position: absolute;
+  box-shadow: 0px 0px 10px 2px rgba(0, 0, 0, 0.15);
+  @include md {
+    width: 20%;
+  }
+  @include lg {
+    width: 80%;
+  }
+}
+
+$amountOfLayers: 5;
+@for $i from 0 through $amountOfLayers {
+  .layer-#{$i} {
+    transform: rotateX(45deg) rotateZ(45deg) translateZ(($i - 5) * 10px);
+  }
+}
+
+.layer-stack:hover {
+  @include lg {
+    transform: translateY(0px) rotateX(0deg) rotateZ(0deg) translateZ(0px) scale(1);
+    z-index: 9;
+    transition: all 0.5s ease-out;
+  }
+}
+
+.thumbnail {
+  padding: 0.25rem;
+  background-color: #fff;
+  border: 1px solid #dee2e6;
+  border-radius: 0.25rem;
+  height: auto;
+}
+
+.roboto-font {
+  font-family: Roboto;
+}
+
+#color-black {
+  color: black;
+}

@@ -13,7 +13,7 @@ namespace MultimediaManagement.Repository
         Task<IEnumerable<TEntity>> Find(Expression<Func<TEntity, bool>> predicate, int skip, int take);
         TEntity SingleOrDefault(Expression<Func<TEntity, bool>> predicate);
         Task<TEntity> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate);
-
+        TEntity FirstOrDefault(Expression<Func<TEntity, bool>> predicate);
         void Add(TEntity entity);
         void AddRange(IEnumerable<TEntity> entities);
         void Update(TEntity entity);

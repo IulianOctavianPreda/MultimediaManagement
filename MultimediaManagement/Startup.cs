@@ -44,7 +44,7 @@ namespace MultimediaManagement
             {
                 configuration.RootPath = "ClientApp/dist";
             });
-            var connection = @"Server=DESKTOP-UONO7AU\SQLEXPRESS;Database=MultimediaManagement;Trusted_Connection=True;ConnectRetryCount=0";
+            var connection = @"Server=DESKTOP-UONO7AU\SQLEXPRESS;Database=WADMultimediaManagement;Trusted_Connection=True;ConnectRetryCount=0";
             services.AddDbContext<MultimediaManagementContext>(options => options.UseSqlServer(connection));
 
         }

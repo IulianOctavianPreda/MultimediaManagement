@@ -1,34 +1,38 @@
-import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { APP_BASE_HREF } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
-import { RouterModule } from '@angular/router';
+import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ModalModule } from 'ngx-bootstrap/modal';
+import { SpeechModule } from 'ngx-speech';
+import { ToastrModule } from 'ngx-toastr';
 
-import { AppComponent } from './app.component';
-import { NavMenuComponent } from './nav-menu/nav-menu.component';
-import { HomeComponent } from './home/home.component';
-import { CounterComponent } from './counter/counter.component';
-import { FetchDataComponent } from './fetch-data/fetch-data.component';
+import { AppRoutingModule } from './app-routing.module';
+import { AppComponent } from './core/app.component';
+import {
+  CollectionOfMultimediaAlbumsModule,
+} from './features/collection-of-multimedia-albums/collection-of-multimedia-albums.module';
+import { EntryModule } from './features/entry/entry.module';
+import { MultimediaAlbumModule } from './features/multimedia-album/multimedia-album.module';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    NavMenuComponent,
-    HomeComponent,
-    CounterComponent,
-    FetchDataComponent
-  ],
+  declarations: [AppComponent],
   imports: [
-    BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
+    BrowserModule,
+    AppRoutingModule,
     HttpClientModule,
-    FormsModule,
-    RouterModule.forRoot([
-      { path: '', component: HomeComponent, pathMatch: 'full' },
-      { path: 'counter', component: CounterComponent },
-      { path: 'fetch-data', component: FetchDataComponent },
-    ])
+    SpeechModule,
+    EntryModule,
+    MultimediaAlbumModule,
+    CollectionOfMultimediaAlbumsModule,
+    BrowserAnimationsModule,
+    ToastrModule.forRoot({ positionClass: "toast-top-right", preventDuplicates: true }),
+    ModalModule.forRoot()
   ],
-  providers: [],
+  providers: [
+    { provide: APP_BASE_HREF, useValue: "/" },
+    { provide: "SPEECH_LANG", useValue: "en-US" }
+  ],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {}

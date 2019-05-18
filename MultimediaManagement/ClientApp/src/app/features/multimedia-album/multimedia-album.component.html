@@ -1,0 +1,238 @@
+<div id="multimedia-album" class="w-100 h-100 p-2 box roboto-font">
+  <!--Button Area-->
+  <div id="button-area" class="w-100 d-flex-block justify-content-between box">
+    <div class="w-resizable-35 d-flex justify-content-between-start">
+      <button
+        type="button"
+        id="addEntityButton"
+        class="btn btn-{{ bootstrapAccentPrimary }} w-min-140px"
+        data-toggle="modal"
+        data-target="#addCollectionModal"
+      >
+        Add
+      </button>
+      <button
+        type="button"
+        id="deleteEntityButton"
+        class="btn btn-{{ _deleteAccent }} w-min-140px"
+        (click)="toggleDeleteButton()"
+      >
+        Delete
+      </button>
+    </div>
+
+    <div class="w-resizable-20 d-flex justify-content-between-end box">
+      <!-- Suggestions Button -->
+      <div class="w-80px d-flex flex-nowrap">
+        <button
+          type="button"
+          id="suggestionsEntityButton"
+          class="btn btn-{{ bootstrapAccentPrimary }} w-80px"
+          data-toggle="modal"
+          data-target="#seeSuggestionsModal"
+        >
+          Tip
+        </button>
+      </div>
+      <!-- Filter Box -->
+      <div class="w-min-140px w-max-140px box">
+        <input class="form-control" type="text" placeholder="Search.." [(ngModel)]="_searchText" />
+      </div>
+    </div>
+  </div>
+
+  <!--Album Area-->
+  <div id="album-area" class="w-100 h-85 mt-3 d-flex-block flex-wrap box">
+    <div
+      class="{{ 'grid-size-' + gridSize }}"
+      *ngFor="let entity of (_albumData | filterAlbum: _searchText); let i = index"
+      data-toggle="modal"
+      [attr.data-target]="_modalDeleteConfirmation"
+      (click)="accessOrDelete(entity, i)"
+    >
+      <!--Placeholder Area-->
+      <div class="w-99 box position-relative">
+        <div id="placeholder2d" class="w-99 box position-relative">
+          <img class="w-100 thumbnail hover-shadow" src="{{ entity.data }}" />
+        </div>
+      </div>
+
+      <!--Entity's Name Area-->
+      <div
+        id="entity-name"
+        class="w-99 d-flex align-items-center justify-content-center text-center box break-word text-overflow-ellipsis"
+      >
+        {{ entity.name }}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Upload Files and Urls -->
+<div
+  class="modal fade roboto-font"
+  id="addCollectionModal"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="addCollection"
+  aria-hidden="true"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addCollection">Upload</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <app-upload
+          class="w-100 h-100"
+          [upload]="_upload"
+          [cancel]="_cancel"
+          [collectionId]="collectionId"
+          [addEntitiesUrl]="addEntitiesUrl"
+          [bootstrapAccentSecondary]="bootstrapAccentSecondary"
+          (newData)="addNewData($event)"
+          (discarded)="discardedData($event)"
+        ></app-upload>
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-{{ bootstrapAccentSecondary }}"
+          data-dismiss="modal"
+          (click)="cancel()"
+        >
+          Close
+        </button>
+        <button
+          type="button"
+          class="btn btn-{{ bootstrapAccentPrimary }}"
+          data-dismiss="modal"
+          (click)="upload()"
+        >
+          Save changes
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal see Suggestions -->
+<div
+  class="modal fade roboto-font"
+  id="seeSuggestionsModal"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="seeSuggestions"
+  aria-hidden="true"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="seeSuggestions">Suggestions</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="false">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body d-flex-block flex-wrap box ">
+        <div
+          class="{{ 'grid-size-' + gridSizeSuggestions }} "
+          *ngFor="let entity of _suggestedEntities; let i = index"
+          (click)="accessSuggested(i)"
+        >
+          <!--Placeholder Area-->
+          <div class="w-99 box position-relative ">
+            <div id="placeholder2d" class="w-99 box position-relative">
+              <img class="w-100 thumbnail hover-shadow" src="{{ entity.data }}" />
+            </div>
+          </div>
+          <!--Entity's Name Area-->
+          <div
+            id="entity-name"
+            class="w-99 d-flex align-items-center justify-content-center text-center box break-word text-overflow-ellipsis"
+          >
+            {{ entity.name }}
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-{{ bootstrapAccentSecondary }}" data-dismiss="modal">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div
+  class="modal fade roboto-font"
+  id="deleteConfirmationModal"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="deleteConfirmation"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="deleteConfirmation">Confirm Delete</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <p>Are you sure you want to delete the collection, this procedure is irreversible.</p>
+        <p>Do you want to proceed?</p>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-{{ bootstrapAccentSecondary }}" data-dismiss="modal">
+          Cancel
+        </button>
+        <button
+          class="btn btn-{{ bootstrapAccentPrimary }}"
+          (click)="deleteEntity()"
+          data-dismiss="modal"
+        >
+          Delete
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Microphone Button -->
+<div id="floatingMicrophone" class="notRecording">
+  <img class="w-50" src="../../../assets/microphoneIcon.png" />
+</div>
+
+<!-- Modal for displaying multimedia files -->
+<app-lightbox
+  (noShow)="noEntityModal($event)"
+  (loadMore)="loadMore($event)"
+  [show]="_showEntityModal"
+  [data]="_albumData | filterAlbum: _searchText"
+  [entityUrl]="getEntityUrl"
+  type="entity"
+  [index]="_slideIndex"
+  [noMoreData]="_noMoreData"
+  [lockSlideShow]="lockSlideShow"
+  [slideShow]="slideShow"
+  [slideShowTimeBeforeNext]="slideShowTimeBeforeNext"
+></app-lightbox>
+
+<!-- Modal for displaying suggested multimedia files -->
+<app-lightbox
+  (noShow)="noSuggestedEntityModal($event)"
+  [show]="_showSuggestedEntityModal"
+  [data]="_suggestedEntities"
+  [entityUrl]="getEntityUrl"
+  type="suggestedEntity"
+  [index]="_suggestedSlideIndex"
+  noMoreData="1"
+  lockSlideShow="false"
+  slideShow="false"
+  slideShowTimeBeforeNext="5000"
+></app-lightbox>

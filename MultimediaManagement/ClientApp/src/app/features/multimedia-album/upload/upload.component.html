@@ -1,0 +1,44 @@
+<div id="uploadModal" class="w-100 h-100 h-min-300px roboto-font">
+  <div class="d-flex flex-wrap align-items-center justify-content-between">
+    <div class="d-flex  flex-nowrap w-resizable-70 mb-1">
+      <input
+        type="text"
+        [(ngModel)]="urlInput"
+        class="form-control mr-1 {{ urlInputClass }}"
+        data-toggle="tooltip"
+        title="The url must end with a known file extension"
+      />
+      <button class="btn btn-{{ bootstrapAccentSecondary }} w-min-100px" (click)="scrapUrl()">
+        Insert Url
+      </button>
+    </div>
+    <div class="d-flex  flex-nowrap justify-content-end w-resizable-30 mb-1">
+      <input hidden type="file" #uploader (change)="uploadFilesFromButton($event)" multiple />
+      <button class="btn btn-{{ bootstrapAccentSecondary }}" (click)="uploader.click()">
+        Select Files
+      </button>
+    </div>
+  </div>
+  <div
+    *ngFor="let entity of arrayOfEntityAndPlaceholder; let i = index"
+    class="d-flex flex-nowrap  align-items-center w-100 mb-2"
+  >
+    <div class="d-flex flex-wrap  align-items-center mr-1">
+      <input
+        [(ngModel)]="arrayOfEntityAndPlaceholder[i].name"
+        placeholder="Name"
+        class="{{ entity.fileSize > 21 ? 'text-danger' : '' }} form-control"
+      />
+      <input
+        [(ngModel)]="arrayOfEntityAndPlaceholder[i].keywords"
+        placeholder="Keyword1,Keyword2,Keyword3"
+        class="{{ entity.fileSize > 21 ? 'text-danger' : '' }} form-control"
+      />
+    </div>
+    <div class="d-flex  flex-nowrap justify-content-end w-min-100px ">
+      <button class="btn btn-danger" (click)="discardFile(entity)">
+        Discard File
+      </button>
+    </div>
+  </div>
+</div>

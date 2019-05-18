@@ -55,6 +55,10 @@ namespace MultimediaManagement.Repository
         {
             return await _context.Set<TEntity>().FirstOrDefaultAsync(predicate);
         }
+        public  TEntity FirstOrDefault(Expression<Func<TEntity, bool>> predicate)
+        {
+            return _context.Set<TEntity>().FirstOrDefault(predicate);
+        }
 
         public async Task<TEntity> Get(Guid id)
         {
