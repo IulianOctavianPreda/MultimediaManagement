@@ -35,24 +35,17 @@ namespace MultimediaManagement.Controllers
 
         // GET: api/Placeholders/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Placeholder>> GetPlaceholderWithEntityFile([FromRoute] Guid id)
+        public async Task<ActionResult<EntityFile>> GetEntityFile([FromRoute] Guid id)
         {
-            using (_placeholder)
+            using (_entityFile)
             {
-                var placeholder = await _placeholder.Get(id);
-
-                if (placeholder == null)
-                {
-                    return NotFound();
-                }
-
-                var entityFile = _entityFile.FirstOrDefault(r => r.PlaceholderId == id);
+                var entityFile = await _entityFile.FirstOrDefaultAsync(r => r.PlaceholderId == id);
                 if (entityFile == null)
                 {
                     return NotFound();
                 }
 
-                return placeholder;
+                return Ok(entityFile);
             }
         }
 
@@ -94,18 +87,21 @@ namespace MultimediaManagement.Controllers
                         {
                             entityFile.Id = Guid.NewGuid();
                             entityFile.PlaceholderId = placeholder.Id;
+                           // _entityFile.Add(entityFile);
                         }
+
                     }
 
 
                     _placeholder.Add(placeholder);
                 }
+                _placeholder.Commit();
                 foreach (var placeholder in placeholders)
                 {
                     placeholder.Data = null;
                     placeholder.EntityFile = null;
                 }
-
+              
                 return Ok(placeholders);
             }
         }
@@ -130,60 +126,6 @@ namespace MultimediaManagement.Controllers
                 return _placeholder.Any(e => e.Id == id);
             }
         }
-
-
-        // GET: api/Collections/5
-        [HttpGet("{id}/{take}/{skip}")]
-        public async Task<IActionResult> GetPlaceholdersFromSpecificCollection([FromRoute] Guid collectionId, [FromRoute] int take, [FromRoute] int skip)
-        {
-            using (_collection)
-            {
-
-                var collection = await _collection.Get(collectionId);
-
-                if (collection == null)
-                {
-                    return NotFound();
-                }
-
-                var placeHolders = await _placeholder.Find(r => r.CollectionId == collection.Id, skip, take);
-
-                foreach (var placeHolder in placeHolders)
-                {
-                    placeHolder.Collection = null;
-                }
-
-
-                collection.Placeholder = (ICollection<Placeholder>)placeHolders;
-
-                return Ok(collection);
-            }
-        }
-
-        [HttpGet("{id}/{take}/{skip}/{keywords}")]
-        public async Task<IActionResult> GetPlaceholdersFromSpecificCollectionWithKeywords([FromRoute] Guid collectionId, [FromRoute] int take, [FromRoute] int skip, [FromRoute] String keywords)
-        {
-            var keywordsArr = keywords.Split(',');
-
-            var collection = await _collection.Get(collectionId);
-
-            if (collection == null)
-            {
-                return NotFound();
-            }
-
-            var placeHolders = await _placeholder.Find(r => r.CollectionId != collectionId && keywordsArr.Any(el => r.Keywords != null && r.Keywords.Contains(el)), skip, take);
-
-            foreach (var placeHolder in placeHolders)
-            {
-                placeHolder.Collection = null;
-            }
-
-
-            collection.Placeholder = (ICollection<Placeholder>)placeHolders;
-
-            return Ok(collection);
-
-        }
+        
     }
 }

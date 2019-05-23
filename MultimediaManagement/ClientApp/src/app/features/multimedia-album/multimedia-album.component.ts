@@ -29,7 +29,7 @@ export class MultimediaAlbumComponent implements OnInit, OnDestroy {
   lockSlideShow;
   slideShowTimeBeforeNext;
 
-  _albumData;
+  _albumData = [];
   _searchText;
   _mostUsedKeywords;
   _loadedFirstTime = false;
@@ -130,11 +130,11 @@ export class MultimediaAlbumComponent implements OnInit, OnDestroy {
           .replace("/$skip", `/${this.skip}`)
       )
       .pipe(take(1))
-      .subscribe((data: Object[]) => {
+      .subscribe((data) => {
         if (typeof this._albumData == "undefined") {
           this._albumData = [];
         }
-        if (data.length != 0) {
+        if (data["placeholder"].length != 0) {
           //console.log(this._albumData);
           this._albumData = [...this._albumData, ...data["placeholder"]];
           this.skip += this.take;

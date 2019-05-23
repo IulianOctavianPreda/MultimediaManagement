@@ -31,22 +31,25 @@ export class LoginComponent implements OnInit, OnDestroy {
       role: null
     });
     this.formGroup.controls["role"].valueChanges.subscribe((value) => {
+      console.log(value);
       if (value == "guest") {
-        this.formGroup.patchValue({ username: "guest", password: null });
         this.formGroup.controls["username"].clearValidators();
         this.formGroup.controls["password"].clearValidators();
+        this.formGroup.patchValue({ username: "guest", password: null });
       } else {
         this.formGroup.controls["username"].setValidators([Validators.required]);
         this.formGroup.controls["password"].setValidators([
           Validators.required,
           Validators.minLength(8)
         ]);
+        this.formGroup.patchValue({ username: null, password: null });
       }
     });
   }
 
   ngOnInit() {
     this.formGroup.controls["role"].setValidators([Validators.required]);
+    this.formGroup.patchValue({ role: "user" });
   }
 
   ngOnDestroy(): void {

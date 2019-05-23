@@ -5,15 +5,12 @@
 
   "take": 10,
   "skip": 0,
-  "collectionUrl": "http://localhost:49882/api/Collections/$userId/$take/$skip",
-  "suggestedCollectionUrl": "http://localhost:49882/api/Collections/public/$userId/$take/$skip",
-
+  "collectionUrl": "http://localhost:49882/api/Users/$userId/$take/$skip",
+  "suggestedCollectionUrl": "http://localhost:49882/api/Users/public/$userId/$take/$skip",
   "deleteCollectionUrl": "http://localhost:49882/api/Collections/$collectionId",
   "addCollectionUrl": "http://localhost:49882/api/Collections",
-
-  "albumUrl": "http://localhost:49882/api/Placeholders/$collectionId/$take/$skip",
-
-  "suggestedEntityUrl": "http://localhost:49882/api/Placeholders/$collectionId/$take/$skip",
+  "albumUrl": "http://localhost:49882/api/Collections/$collectionId/$take/$skip",
+  "suggestedEntityUrl": "http://localhost:49882/api/Collections/$collectionId/$take/$skip",
   "deleteEntityUrl": "http://localhost:49882/api/Placeholders/$entityId",
   "addEntitiesUrl": "http://localhost:49882/api/Placeholders",
   "getEntityUrl": "http://localhost:49882/api/Placeholders/$entityId",

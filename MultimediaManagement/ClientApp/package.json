@@ -7,7 +7,9 @@
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "generate": "swagger-angular-generator -u localhost:49882/swagger -s src/app/api/swagger-documentation/scheme.json -d src/app/api/generated --no-store",
+    "generateUrl": "swagger-angular-generator -u http://localhost:49882/swagger -d src/api/generated"
   },
   "private": true,
   "dependencies": {
@@ -34,6 +36,7 @@
     "ngx-toastr": "^10.0.4",
     "pdfjs-dist": "^2.0.943",
     "rxjs": "~6.3.3",
+    "swagger-angular-generator": "^4.0.0",
     "tslib": "^1.9.0",
     "zone.js": "~0.8.26"
   },

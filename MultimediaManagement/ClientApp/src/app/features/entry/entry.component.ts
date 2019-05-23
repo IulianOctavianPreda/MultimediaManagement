@@ -7,11 +7,12 @@ import { DataManagerService } from 'src/app/shared/services/data-manager.service
   styleUrls: ["./entry.component.scss"]
 })
 export class EntryComponent implements OnInit {
-  selected = "login";
+  selected;
 
   constructor(public dataManager: DataManagerService) {}
 
   ngOnInit() {
+    this.selected = "login";
     this.dataManager.setState("entry");
   }
 

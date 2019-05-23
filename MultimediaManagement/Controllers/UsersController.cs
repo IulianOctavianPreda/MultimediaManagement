@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using MultimediaManagement.Models;
@@ -13,11 +14,18 @@ namespace MultimediaManagement.Controllers
     public class UsersController : ControllerBase
     {
         private IUserRepository _user;
+        public ICollectionRepository _collection;
+        public IPlaceholderRepository _placeholder;
 
-        public UsersController(IUserRepository user)
+        public UsersController(IUserRepository user, ICollectionRepository collection, IPlaceholderRepository placeholder)
         {
             _user = user;
+            _collection = collection;
+            _placeholder = placeholder;
+
+
         }
+
 
         // GET: api/Users
         [HttpGet]
@@ -125,7 +133,8 @@ namespace MultimediaManagement.Controllers
                     }
 
                     loginUser.ModifiedOn = DateTime.Now;
-                    _user.Update(user);
+                    loginUser.Token = Guid.NewGuid();
+                    _user.Update(loginUser);
                     _user.Commit();
                     loginUser.Password = null;
 
@@ -165,6 +174,99 @@ namespace MultimediaManagement.Controllers
                     return Ok(user);
                 }
                 
+            }
+        }
+        [HttpGet("public/{id}/{take}/{skip}")]
+        public async Task<IActionResult> GetPublicCollections([FromRoute] Guid userId, [FromRoute] int take, [FromRoute] int skip)
+        {
+
+            using (_collection)
+            {
+                IEnumerable<Collection> collections;
+                if (_user.FirstOrDefault(x => x.Id == userId).Username == "guest")
+                {
+                    collections = await _collection.Find(r => r.UserId == userId && r.Type == 0, skip, take);
+                    var collection1 = await _collection.Find(r => r.UserId != userId && r.Type == 0, skip, take);
+                    collections = collections.Concat(collection1);
+                }
+                else
+                {
+                    collections = await _collection.Find(r => r.UserId != userId && r.Type == 0, skip, take);
+                }
+                foreach (var collection in collections)
+                {
+                    collection.User = null;
+                    using (_placeholder)
+                    {
+                        collection.Placeholder = (ICollection<Placeholder>)await _placeholder.Find(r => r.CollectionId == collection.Id, 0, 10);
+                        foreach (var placeholder in collection.Placeholder)
+                        {
+                            placeholder.Collection = null;
+                        }
+                    }
+
+                }
+                return Ok(collections);
+            }
+        }
+
+        [HttpGet("public/{id}/{take}/{skip}/{keywords}")]
+        public async Task<IActionResult> GetPublicCollectionsWithKeywords([FromRoute] Guid userId, [FromRoute] int take, [FromRoute] int skip, [FromRoute] String keywords)
+        {
+            using (_collection)
+            {
+                var keywordsArr = keywords.Split(',');
+                IEnumerable<Collection> collections;
+                if (_user.FirstOrDefault(x => x.Id == userId).Username == "guest")
+                {
+                    collections = await _collection.Find(r => r.UserId == userId && r.Type == 0 && keywordsArr.Any(el => r.Keywords.Contains(el)), skip, take);
+                    var collection1 = await _collection.Find(r => r.UserId != userId && r.Type == 0 && keywordsArr.Any(el => r.Keywords.Contains(el)), skip, take);
+                    collections = collections.Concat(collection1);
+                }
+                else
+                {
+                    collections = await _collection.Find(r => r.UserId != userId && r.Type == 0 && keywordsArr.Any(el => r.Keywords.Contains(el)), skip, take);
+                }
+
+
+                foreach (var collection in collections)
+                {
+                    collection.User = null;
+                    collection.Placeholder = (ICollection<Placeholder>)await _placeholder.Find(r => r.CollectionId == collection.Id, 0, 10);
+                    foreach (var placeholder in collection.Placeholder)
+                    {
+                        placeholder.Collection = null;
+                    }
+                }
+                return Ok(collections);
+            }
+        }
+
+        // GET: api/Users/5
+        [HttpGet("{id}/{take}/{skip}")]
+        public async Task<IActionResult> GetUser([FromRoute] Guid userId, [FromRoute] int take, [FromRoute] int skip)
+        {
+            using (_user)
+            {
+                var user = await _user.FirstOrDefaultAsync(r => r.Id == userId);
+
+                if (user == null)
+                {
+                    return NotFound();
+                }
+                user.Password = null;
+
+                var collections = await _collection.Find(r => r.UserId == userId, skip, take);
+                foreach (var collection in user.Collection)
+                {
+                    collection.User = null;
+                    collection.Placeholder = (ICollection<Placeholder>)await _placeholder.Find(r => r.CollectionId == collection.Id, 0, 10);
+                    foreach (var placeholder in collection.Placeholder)
+                    {
+                        placeholder.Collection = null;
+                    }
+                }
+                return Ok(user);
             }
         }
     }

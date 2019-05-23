@@ -1,8 +1,6 @@
-<div
-  class="background container-fluid d-flex align-items-center justify-content-center p-0 flex-column"
->
-  <div class="w-min-30 my-4">
-    <div class="display-flex w-min-30 justify-content-start">
+<div class=" d-flex align-items-center justify-content-center p-0 flex-column">
+  <div class="w-min-30 my-4 border">
+    <div class="display-flex w-min-30 justify-content-start ">
       <ul class="nav nav-tabs">
         <li class="nav-item">
           <a
@@ -24,7 +22,7 @@
       </ul>
     </div>
 
-    <div class="display-flex w-min-30 entry-panel py-4 px-2">
+    <div class="display-flex w-min-30 py-4 px-2">
       <div [ngSwitch]="selected">
         <app-login *ngSwitchCase="'login'"></app-login>
         <app-sign-up *ngSwitchCase="'signup'"></app-sign-up>

@@ -177,26 +177,25 @@ export class CollectionOfMultimediaAlbumsComponent implements OnInit, OnDestroy 
           .replace("/$skip", `/${this.skip}`)
       )
       .pipe(take(1))
-      .subscribe((data: Object[]) => {
+      .subscribe((data) => {
         if (typeof this._collectionData == "undefined") {
           this._collectionData = [];
         }
-        // data["collection"].forEach((collection) => {
-        Object.keys(data).forEach((key) => {
+        data["collection"].forEach((collection) => {
           //console.log(collection);
           //console.log(collection["placeholder"].length);
 
-          if (data[key]["placeholder"].length == 0) {
-            data[key]["placeholder"] = [
+          if (collection["placeholder"].length == 0) {
+            collection["placeholder"] = [
               {
                 data: "../../../assets/new-collection.jpg"
               }
             ];
           }
         });
-        if (Object.keys(data).length != 0) {
+        if (data["collection"].length != 0) {
           //console.log(this._collectionData);
-          this._collectionData = [...this._collectionData, ...data];
+          this._collectionData = [...this._collectionData, ...data["collection"]];
           this.skip += this.take;
           var str = "";
           this._collectionData.forEach((collection) => {

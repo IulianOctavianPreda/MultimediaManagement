@@ -1,9 +1,8 @@
 <form [formGroup]="formGroup" (ngSubmit)="login()">
   <div class="form-group">
     <select formControlName="role" class="form-control form-control">
-      <option disabled>Large select</option>
-      <option [value]="'guest'">Guest</option>
       <option [value]="'user'">User</option>
+      <option [value]="'guest'">Guest</option>
     </select>
   </div>
 

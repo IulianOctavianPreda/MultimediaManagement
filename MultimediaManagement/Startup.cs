@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using MultimediaManagement.Models;
 using MultimediaManagement.Services;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace MultimediaManagement
 {
@@ -38,6 +39,14 @@ namespace MultimediaManagement
             services.AddCors();
             ServiceRegistration.ServiceRegistrator(services);
 
+            services.AddSwaggerGen(c => {
+                c.SwaggerDoc("v1", new Info
+                {
+                    Version = "v1",
+                    Title = "Test API",
+                    Description = "ASP.NET Core Web API"
+                });
+            });
 
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
@@ -60,6 +69,11 @@ namespace MultimediaManagement
             {
                 app.UseExceptionHandler("/Error");
             }
+
+            app.UseSwagger();
+            app.UseSwaggerUI(c => {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Test API V1");
+            });
 
             app.UseStaticFiles();
             app.UseSpaStaticFiles();

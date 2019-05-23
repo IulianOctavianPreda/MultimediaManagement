@@ -61,7 +61,7 @@ export class SignUpComponent implements OnInit, OnDestroy {
           switchMap((response) => {
             if (response != null) {
               this.dataManager.setToken(response.token);
-              this.dataManager.setUserId(signupData.username);
+              this.dataManager.setUserId(signupData.id);
               return this.http.post("http://localhost:49882/api/Security/getRole", {
                 token: response.token
               });
